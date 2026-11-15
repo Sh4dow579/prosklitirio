@@ -1,0 +1,9 @@
+name = "prosklitirio"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "prosklitirio-db"
+
+database_id = "b4742e43-c0bd-42d4-97f7-345985b8eda8"

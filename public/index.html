@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Προσκλητήριο Γάμου</title>
+<meta name="description" content="Σας προσκαλούμε στον γάμο μας">
+<meta property="og:title" content="Προσκλητήριο Γάμου">
+<meta property="og:description" content="Σας προσκαλούμε στον γάμο μας — πατήστε για να απαντήσετε">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=GFS+Didot&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- Κοινά SVG σχέδια (πλακάκι azulejo, μονόγραμμα) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="azulejo" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fbf8f1"/>
+      <g fill="none" stroke="#1d4596" stroke-width="2.2">
+        <rect x="1.1" y="1.1" width="97.8" height="97.8" stroke-width="1.4"/>
+        <circle cx="50" cy="50" r="30"/>
+        <path d="M0 22 A22 22 0 0 0 22 0 M78 0 A22 22 0 0 0 100 22 M100 78 A22 22 0 0 0 78 100 M22 100 A22 22 0 0 0 0 78"/>
+      </g>
+      <g fill="#1d4596">
+        <path d="M50 20 C56 30 56 38 50 44 C44 38 44 30 50 20Z"/>
+        <path d="M50 80 C56 70 56 62 50 56 C44 62 44 70 50 80Z"/>
+        <path d="M20 50 C30 44 38 44 44 50 C38 56 30 56 20 50Z"/>
+        <path d="M80 50 C70 44 62 44 56 50 C62 56 70 56 80 50Z"/>
+        <path d="M0 0 L16 0 C14 8 8 14 0 16Z M100 0 L84 0 C86 8 92 14 100 16Z M100 100 L84 100 C86 92 92 86 100 84Z M0 100 L16 100 C14 92 8 86 0 84Z"/>
+        <circle cx="50" cy="50" r="5"/>
+      </g>
+      <g fill="#5d86d1">
+        <path d="M29 29 C36 30 40 34 41 41 C34 40 30 36 29 29Z"/>
+        <path d="M71 29 C64 30 60 34 59 41 C66 40 70 36 71 29Z"/>
+        <path d="M71 71 C64 70 60 66 59 59 C66 60 70 64 71 71Z"/>
+        <path d="M29 71 C36 70 40 66 41 59 C34 60 30 64 29 71Z"/>
+      </g>
+      <g fill="#5d86d1">
+        <circle cx="50" cy="6" r="2.4"/><circle cx="50" cy="94" r="2.4"/>
+        <circle cx="6" cy="50" r="2.4"/><circle cx="94" cy="50" r="2.4"/>
+      </g>
+    </symbol>
+    <pattern id="tiles" width="64" height="64" patternUnits="userSpaceOnUse">
+      <use href="#azulejo" width="64" height="64"/>
+    </pattern>
+  </defs>
+</svg>
+
+<!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή) ============ -->
+<div class="envelope-stage" id="envelope" role="button" tabindex="0" aria-label="Ανοίξτε το προσκλητήριο">
+  <svg class="stage-tiles" aria-hidden="true"><rect width="100%" height="100%" fill="url(#tiles)"/></svg>
+  <div class="env-float">
+    <div class="envelope">
+      <!-- εσωτερικό φακέλου με πλακάκια -->
+      <div class="env-back"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+
+      <!-- κάρτα που βγαίνει από τον φάκελο -->
+      <div class="letter">
+        <div class="letter-band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+        <p class="letter-names"><span data-cfg="bride"></span> <em>&amp;</em> <span data-cfg="groom"></span></p>
+        <p class="letter-date" data-cfg="date"></p>
+      </div>
+
+      <!-- μπροστινή πλευρά (τσέπη) -->
+      <svg class="env-front" viewBox="0 0 700 500" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="gSide" x1="0" x2="1"><stop offset="0" stop-color="#f3efe6"/><stop offset="1" stop-color="#fbf9f4"/></linearGradient>
+          <linearGradient id="gSideR" x1="1" x2="0"><stop offset="0" stop-color="#efeadf"/><stop offset="1" stop-color="#faf8f2"/></linearGradient>
+          <linearGradient id="gBottom" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fffdf9"/><stop offset="1" stop-color="#f6f2ea"/></linearGradient>
+          <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>
+        </defs>
+        <path d="M0 0 L352 282 L0 500Z" fill="url(#gSide)"/>
+        <path d="M700 0 L348 282 L700 500Z" fill="url(#gSideR)"/>
+        <path d="M0 500 L350 228 L700 500Z" fill="#000" opacity=".07" filter="url(#soft)" transform="translate(0,-4)"/>
+        <path d="M0 500 L350 232 L700 500Z" fill="url(#gBottom)"/>
+        <path d="M0 500 L350 232 L700 500" fill="none" stroke="#e4ddcf" stroke-width="1.2"/>
+        <rect x="14" y="14" width="672" height="472" fill="none" stroke="#1d4596" stroke-opacity=".18" stroke-width="1"/>
+      </svg>
+      <p class="env-front-text"><span data-cfg="bride"></span> &amp; <span data-cfg="groom"></span></p>
+
+      <!-- σκιά κάτω από το καπάκι -->
+      <svg class="flap-shadow" viewBox="0 0 700 300" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 4 L350 306 L700 4" fill="none" stroke="#14264f" stroke-opacity=".22" stroke-width="10" filter="url(#soft)"/>
+      </svg>
+
+      <!-- καπάκι: έξω λευκό, μέσα πλακάκια -->
+      <div class="env-flap">
+        <div class="flap-face flap-out">
+          <svg viewBox="0 0 700 300" preserveAspectRatio="none">
+            <defs><linearGradient id="gFlap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfbf7"/><stop offset="1" stop-color="#f1ece2"/></linearGradient></defs>
+            <path d="M0 0 L700 0 L350 300Z" fill="url(#gFlap)"/>
+            <path d="M0 0 L350 300 L700 0" fill="none" stroke="#e2dacb" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="flap-face flap-in"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+      </div>
+
+      <!-- σφραγίδα από βουλοκέρι -->
+      <div class="seal">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <radialGradient id="gWax" cx="38%" cy="32%" r="75%">
+              <stop offset="0" stop-color="#4f7fd6"/><stop offset=".45" stop-color="#1f4ea8"/><stop offset="1" stop-color="#132f6e"/>
+            </radialGradient>
+          </defs>
+          <path d="M50 3 C61 3 66 9 75 11 C85 14 90 22 93 31 C97 41 95 50 97 59 C98 70 91 77 86 84 C79 93 69 95 59 97 C49 99 41 96 32 94 C21 91 13 86 8 76 C3 67 5 58 3 48 C2 37 7 29 13 21 C20 12 29 8 39 5 C43 4 46 3 50 3Z" fill="url(#gWax)"/>
+          <circle cx="50" cy="50" r="33" fill="none" stroke="#0f2659" stroke-opacity=".45" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="30" fill="none" stroke="#9fbcf0" stroke-opacity=".35" stroke-width="1"/>
+          <ellipse cx="36" cy="27" rx="12" ry="6" fill="#fff" opacity=".18" transform="rotate(-25 36 27)"/>
+        </svg>
+        <span data-cfg="monogram"></span>
+      </div>
+
+      <div class="burst" id="burst" aria-hidden="true"></div>
+    </div>
+  </div>
+  <p class="env-hint">Πατήστε για να ανοίξετε</p>
+</div>
+
+<!-- ============ ΠΡΟΣΚΛΗΤΗΡΙΟ ============ -->
+<main class="card" id="card" aria-hidden="true">
+  <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+
+  <section class="invite">
+    <p class="eyebrow" data-cfg="intro"></p>
+    <h1 class="names">
+      <span data-cfg="bride"></span>
+      <span class="amp">&amp;</span>
+      <span data-cfg="groom"></span>
+    </h1>
+    <p class="lead" data-cfg="invitationText"></p>
+
+    <div class="when">
+      <span class="when-day" data-cfg="weekday"></span>
+      <span class="when-date" data-cfg="date"></span>
+      <span class="when-time" data-cfg="time"></span>
+    </div>
+
+    <div class="places">
+      <div class="place">
+        <h2>Μυστήριο</h2>
+        <p class="place-name" data-cfg="ceremonyName"></p>
+        <p class="place-addr" data-cfg="ceremonyAddress"></p>
+        <a class="map-link" data-cfg-href="ceremonyMap" target="_blank" rel="noopener">Οδηγίες χάρτη →</a>
+      </div>
+      <div class="place">
+        <h2>Δεξίωση</h2>
+        <p class="place-name" data-cfg="receptionName"></p>
+        <p class="place-addr" data-cfg="receptionAddress"></p>
+        <a class="map-link" data-cfg-href="receptionMap" target="_blank" rel="noopener">Οδηγίες χάρτη →</a>
+      </div>
+    </div>
+
+    <div class="divider"><span></span><i data-cfg="monogram"></i><span></span></div>
+  </section>
+
+  <!-- ============ RSVP ============ -->
+  <section class="rsvp" id="rsvp">
+    <h2 class="rsvp-title">Θα έρθετε;</h2>
+    <p class="rsvp-sub">Παρακαλούμε απαντήστε έως <strong data-cfg="rsvpDeadline"></strong></p>
+
+    <form id="rsvp-form" novalidate>
+      <label class="field">
+        <span>Ονοματεπώνυμο</span>
+        <input type="text" name="name" id="f-name" autocomplete="name" maxlength="120" required placeholder="π.χ. Οικογένεια Παπαδόπουλου">
+      </label>
+
+      <fieldset class="choice">
+        <legend>Η απάντησή σας</legend>
+        <label class="pill"><input type="radio" name="attending" value="yes" checked><span>Θα έρθω με χαρά</span></label>
+        <label class="pill"><input type="radio" name="attending" value="no"><span>Δυστυχώς δεν μπορώ</span></label>
+      </fieldset>
+
+      <div class="counts" id="counts">
+        <div class="counter">
+          <div class="counter-label">
+            <span>Ενήλικες</span>
+            <small>συμπεριλαμβανομένου εσάς</small>
+          </div>
+          <div class="stepper">
+            <button type="button" data-step="adults" data-d="-1" aria-label="Λιγότεροι ενήλικες">−</button>
+            <output id="adults">1</output>
+            <button type="button" data-step="adults" data-d="1" aria-label="Περισσότεροι ενήλικες">+</button>
+          </div>
+        </div>
+        <div class="counter">
+          <div class="counter-label">
+            <span>Παιδιά</span>
+            <small>έως 12 ετών</small>
+          </div>
+          <div class="stepper">
+            <button type="button" data-step="children" data-d="-1" aria-label="Λιγότερα παιδιά">−</button>
+            <output id="children">0</output>
+            <button type="button" data-step="children" data-d="1" aria-label="Περισσότερα παιδιά">+</button>
+          </div>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Μήνυμα για το ζευγάρι <small>(προαιρετικό)</small></span>
+        <textarea name="message" id="f-message" rows="3" maxlength="1000" placeholder="Ευχές, αλλεργίες σε φαγητά, οτιδήποτε θέλετε να μας πείτε…"></textarea>
+      </label>
+
+      <p class="error" id="form-error" role="alert" hidden></p>
+      <button type="submit" class="submit" id="submit-btn">Αποστολή απάντησης</button>
+    </form>
+
+    <div class="thanks" id="thanks" hidden>
+      <p class="thanks-title" id="thanks-title"></p>
+      <p class="thanks-text" id="thanks-text"></p>
+      <button type="button" class="link-btn" id="edit-btn">Αλλαγή απάντησης</button>
+    </div>
+  </section>
+
+  <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+</main>
+
+<script>
+/* =====================================================================
+   ΣΤΟΙΧΕΙΑ ΓΑΜΟΥ — αλλάξτε μόνο αυτά
+   ===================================================================== */
+const CONFIG = {
+  bride: "Σπύρος",
+  groom: "Μελίνα",
+  monogram: "Σ·Μ",
+  intro: "Με μεγάλη χαρά σας ανακοινώνουμε τον γάμο μας",
+  invitationText: "και θα ήταν τιμή μας να είστε κοντά μας σε αυτή την ξεχωριστή μέρα",
+  weekday: "Σάββατο",
+  date: "12 Ιουνίου 2027",
+  time: "στις 7:00 μ.μ.",
+  ceremonyName: "Εκκλησάκι Αγίων Πέτρου και Παύλου",
+  ceremonyAddress: "Σπάτα",
+  ceremonyMap: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Άγιοι Πέτρος και Παύλος Σπάτα"),
+  receptionName: "Villa Elia",
+  receptionAddress: "Μαρκόπουλο",
+  receptionMap: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Villa Elia Μαρκόπουλο"),
+  rsvpDeadline: "1 Μαΐου 2027",
+};
+/* ===================================================================== */
+
+document.querySelectorAll("[data-cfg]").forEach(el => { el.textContent = CONFIG[el.dataset.cfg] ?? ""; });
+document.querySelectorAll("[data-cfg-href]").forEach(el => { el.href = CONFIG[el.dataset.cfgHref] ?? "#"; });
+document.title = `${CONFIG.bride} & ${CONFIG.groom} — Προσκλητήριο`;
+
+/* ---------- Φάκελος ---------- */
+const envelope = document.getElementById("envelope");
+const card = document.getElementById("card");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let opened = false;
+function burst() {
+  const box = document.getElementById("burst");
+  const colors = ["#1d4596", "#5d86d1", "#ffffff", "#c9d6f2", "#2f5fbf", "#e9eef8"];
+  for (let i = 0; i < 34; i++) {
+    const p = document.createElement("i");
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 90 + Math.random() * 170;
+    p.className = Math.random() < 0.25 ? "spark" : "petal";
+    p.style.setProperty("--x", `${Math.cos(angle) * dist}px`);
+    p.style.setProperty("--y", `${Math.sin(angle) * dist - 40}px`);
+    p.style.setProperty("--r", `${(Math.random() - 0.5) * 720}deg`);
+    p.style.setProperty("--s", (0.6 + Math.random() * 0.9).toFixed(2));
+    p.style.setProperty("--d", `${(0.9 + Math.random() * 0.8).toFixed(2)}s`);
+    p.style.setProperty("--c", colors[i % colors.length]);
+    box.appendChild(p);
+  }
+}
+
+function openEnvelope() {
+  if (opened) return;
+  opened = true;
+  envelope.classList.add("open");
+  if (navigator.vibrate) try { navigator.vibrate(15); } catch {}
+  const t = reduceMotion ? [0, 0, 0] : [220, 3100, 900];
+  setTimeout(burst, t[0]);
+  setTimeout(() => {
+    envelope.classList.add("gone");
+    card.classList.add("shown");
+    card.removeAttribute("aria-hidden");
+    setTimeout(() => envelope.remove(), t[2]);
+  }, t[1]);
+}
+if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
+  opened = true; envelope.remove(); card.classList.add("shown"); card.removeAttribute("aria-hidden");
+}
+envelope.addEventListener("click", openEnvelope);
+envelope.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEnvelope(); } });
+
+/* ---------- RSVP ---------- */
+const STORE_KEY = "rsvp-response";
+const form = document.getElementById("rsvp-form");
+const countsEl = document.getElementById("counts");
+const errorEl = document.getElementById("form-error");
+const submitBtn = document.getElementById("submit-btn");
+const thanks = document.getElementById("thanks");
+const counts = { adults: 1, children: 0 };
+const LIMITS = { adults: [1, 20], children: [0, 20] };
+
+function loadSaved() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch { return null; } }
+function save(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch {} }
+
+function renderCounts() {
+  for (const k of ["adults", "children"]) {
+    document.getElementById(k).textContent = counts[k];
+    document.querySelector(`[data-step="${k}"][data-d="-1"]`).disabled = counts[k] <= LIMITS[k][0];
+    document.querySelector(`[data-step="${k}"][data-d="1"]`).disabled = counts[k] >= LIMITS[k][1];
+  }
+}
+document.querySelectorAll("[data-step]").forEach(btn => btn.addEventListener("click", () => {
+  const k = btn.dataset.step;
+  counts[k] = Math.min(LIMITS[k][1], Math.max(LIMITS[k][0], counts[k] + Number(btn.dataset.d)));
+  renderCounts();
+}));
+
+function attendingValue() { return form.querySelector("input[name=attending]:checked").value === "yes"; }
+function syncAttending() { countsEl.classList.toggle("hidden", !attendingValue()); }
+form.querySelectorAll("input[name=attending]").forEach(r => r.addEventListener("change", syncAttending));
+
+function showThanks(r) {
+  const total = r.adults + r.children;
+  document.getElementById("thanks-title").textContent = r.attending ? "Σας ευχαριστούμε!" : "Θα μας λείψετε!";
+  document.getElementById("thanks-text").textContent = r.attending
+    ? `Λάβαμε την απάντησή σας: ${total} ${total === 1 ? "άτομο" : "άτομα"} (${r.adults} ${r.adults === 1 ? "ενήλικας" : "ενήλικες"}${r.children ? `, ${r.children} ${r.children === 1 ? "παιδί" : "παιδιά"}` : ""}). Ανυπομονούμε να σας δούμε!`
+    : "Λάβαμε την απάντησή σας. Σας ευχαριστούμε που μας ενημερώσατε.";
+  form.hidden = true;
+  thanks.hidden = false;
+}
+
+function fillForm(r) {
+  document.getElementById("f-name").value = r.name || "";
+  document.getElementById("f-message").value = r.message || "";
+  form.querySelector(`input[name=attending][value=${r.attending ? "yes" : "no"}]`).checked = true;
+  counts.adults = Math.max(1, r.adults || 1);
+  counts.children = r.children || 0;
+  renderCounts();
+  syncAttending();
+}
+
+document.getElementById("edit-btn").addEventListener("click", () => {
+  thanks.hidden = true;
+  form.hidden = false;
+  submitBtn.textContent = "Ενημέρωση απάντησης";
+});
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  errorEl.hidden = true;
+  const name = document.getElementById("f-name").value.trim();
+  if (name.length < 2) {
+    errorEl.textContent = "Παρακαλούμε γράψτε το όνομά σας.";
+    errorEl.hidden = false;
+    document.getElementById("f-name").focus();
+    return;
+  }
+  const attending = attendingValue();
+  const payload = {
+    id: loadSaved()?.id,
+    name,
+    attending,
+    adults: attending ? counts.adults : 0,
+    children: attending ? counts.children : 0,
+    message: document.getElementById("f-message").value.trim(),
+  };
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Αποστολή…";
+  try {
+    const res = await fetch("/api/rsvp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Κάτι πήγε στραβά.");
+    const saved = { ...payload, id: data.id };
+    save(saved);
+    showThanks(saved);
+  } catch (err) {
+    errorEl.textContent = (err.message || "Κάτι πήγε στραβά.") + " Δοκιμάστε ξανά.";
+    errorEl.hidden = false;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = loadSaved() ? "Ενημέρωση απάντησης" : "Αποστολή απάντησης";
+  }
+});
+
+/* Αν έχει ήδη απαντήσει από αυτή τη συσκευή */
+renderCounts();
+const prev = loadSaved();
+if (prev) { fillForm(prev); showThanks(prev); }
+</script>
+</body>
+</html>

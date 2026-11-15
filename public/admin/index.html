@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Απαντήσεις καλεσμένων</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #14264f; --cobalt: #1d4596; --sky: #5d86d1;
+    --bg: #f4f2ec; --surface: #fff; --ink: #1f2f57; --muted: #5d6a8c; --line: #e1e4ee;
+    --yes: #1f7a4d; --yes-bg: #e6f3ec; --no: #9a3b3b; --no-bg: #f7e9e9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1a33; --surface: #17244a; --ink: #e8ecf6; --muted: #9aa7c7; --line: #26365f;
+      --cobalt: #8fb0f0; --yes: #7fd3a8; --yes-bg: #173b2c; --no: #f0a0a0; --no-bg: #43202a;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "EB Garamond", Georgia, serif; font-size: 17px; line-height: 1.45;
+  }
+  header {
+    background: var(--navy); color: #fff; padding: 18px 16px;
+    border-bottom: 4px solid var(--sky);
+  }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-weight: 500; font-style: italic; font-size: 26px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  main.wrap { padding-top: 24px; padding-bottom: 48px; }
+  button, input { font: inherit; }
+  .btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 8px 14px; cursor: pointer;
+  }
+  header .btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+  header .btn:hover { background: rgba(255,255,255,.1); }
+  .btn.primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* login */
+  .login { max-width: 360px; margin: 12vh auto 0; background: var(--surface); padding: 28px; border-radius: 12px; border: 1px solid var(--line); }
+  .login h2 { margin: 0 0 16px; font-weight: 500; }
+  .login input {
+    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink); margin-bottom: 12px;
+  }
+  .login .btn { width: 100%; padding: 12px; }
+  .err { color: var(--no); margin: 0 0 12px; }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .stat .label { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .stat .value { font-size: 40px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .stat .sub { color: var(--muted); font-size: 15px; }
+  .stat.hero { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .stat.hero .label, .stat.hero .sub { color: #c4d1f0; }
+
+  /* toolbar */
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 28px 0 12px; }
+  .tabs { display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .tabs button { border: 0; background: none; color: var(--ink); padding: 8px 14px; cursor: pointer; }
+  .tabs button.active { background: var(--cobalt); color: #fff; }
+  @media (prefers-color-scheme: dark) {
+    .tabs button.active, .btn.primary { color: var(--bg); }
+    .btn.primary { background: var(--cobalt); border-color: var(--cobalt); }
+  }
+  .search {
+    flex: 1; min-width: 180px; padding: 8px 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+
+  /* table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: center; font-variant-numeric: tabular-nums; }
+  .name { font-weight: 500; }
+  .msg { color: var(--muted); font-style: italic; max-width: 320px; white-space: pre-wrap; }
+  .date { color: var(--muted); font-size: 15px; white-space: nowrap; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 14px; white-space: nowrap; }
+  .badge.yes { background: var(--yes-bg); color: var(--yes); }
+  .badge.no { background: var(--no-bg); color: var(--no); }
+  .del { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 2px 6px; border-radius: 6px; }
+  .del:hover { color: var(--no); background: var(--no-bg); }
+  .empty { padding: 32px; text-align: center; color: var(--muted); }
+  .updated { color: var(--muted); font-size: 15px; margin-top: 10px; }
+
+  @media (max-width: 720px) {
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { padding: 12px 14px; border-bottom: 1px solid var(--line); position: relative; }
+    tr:last-child { border-bottom: 0; }
+    td { border: 0; padding: 2px 0; }
+    td.num { display: inline-block; width: auto; margin-right: 14px; text-align: left; }
+    td.num::before { content: attr(data-label) ": "; color: var(--muted); }
+    td.act { position: absolute; top: 10px; right: 8px; width: auto; }
+    .name { padding-right: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Απαντήσεις καλεσμένων</h1>
+    <div class="actions" id="top-actions" hidden>
+      <button class="btn" id="refresh">↻ Ανανέωση</button>
+      <button class="btn" id="export">Λήψη Excel (CSV)</button>
+      <button class="btn" id="logout">Έξοδος</button>
+    </div>
+  </div>
+</header>
+
+<form class="login" id="login" hidden>
+  <h2>Είσοδος</h2>
+  <p class="err" id="login-err" hidden></p>
+  <input type="password" id="password" placeholder="Κωδικός" autocomplete="current-password" required>
+  <button class="btn primary" type="submit">Είσοδος</button>
+</form>
+
+<main class="wrap" id="dash" hidden>
+  <section class="stats">
+    <div class="stat hero"><div class="label">Σύνολο ατόμων</div><div class="value" id="s-guests">0</div><div class="sub">που θα έρθουν</div></div>
+    <div class="stat"><div class="label">Ενήλικες</div><div class="value" id="s-adults">0</div></div>
+    <div class="stat"><div class="label">Παιδιά</div><div class="value" id="s-children">0</div></div>
+    <div class="stat"><div class="label">Απαντήσεις</div><div class="value" id="s-responses">0</div><div class="sub" id="s-split"></div></div>
+  </section>
+
+  <div class="toolbar">
+    <div class="tabs" role="tablist">
+      <button data-filter="all" class="active">Όλοι</button>
+      <button data-filter="yes">Έρχονται</button>
+      <button data-filter="no">Δεν έρχονται</button>
+    </div>
+    <input class="search" id="search" type="search" placeholder="Αναζήτηση ονόματος…">
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Όνομα</th><th>Απάντηση</th><th class="num">Ενήλ.</th><th class="num">Παιδιά</th><th>Μήνυμα</th><th>Ημερομηνία</th><th></th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="updated" id="updated"></p>
+</main>
+
+<script>
+const KEY = "rsvp-admin-pw";
+const $ = id => document.getElementById(id);
+let data = { totals: {}, rsvps: [] };
+let filter = "all";
+
+const getPw = () => { try { return sessionStorage.getItem(KEY) || ""; } catch { return ""; } };
+const setPw = v => { try { v ? sessionStorage.setItem(KEY, v) : sessionStorage.removeItem(KEY); } catch {} };
+let password = getPw();
+
+async function api(method = "GET", query = "") {
+  const res = await fetch("/api/admin" + query, { method, headers: { Authorization: "Bearer " + password } });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) { const e = new Error(body.error || "Σφάλμα"); e.status = res.status; throw e; }
+  return body;
+}
+
+function showLogin(msg) {
+  $("dash").hidden = true; $("top-actions").hidden = true; $("login").hidden = false;
+  $("login-err").hidden = !msg; $("login-err").textContent = msg || "";
+  $("password").focus();
+}
+
+async function load() {
+  try {
+    data = await api();
+    $("login").hidden = true; $("dash").hidden = false; $("top-actions").hidden = false;
+    render();
+    $("updated").textContent = "Τελευταία ενημέρωση: " + new Date().toLocaleTimeString("el-GR");
+  } catch (e) {
+    if (e.status === 401) { setPw(""); password = ""; }
+    showLogin(e.message);
+  }
+}
+
+const fmtDate = iso => new Date(iso).toLocaleString("el-GR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function render() {
+  const t = data.totals;
+  $("s-guests").textContent = t.guests;
+  $("s-adults").textContent = t.adults;
+  $("s-children").textContent = t.children;
+  $("s-responses").textContent = t.responses;
+  $("s-split").textContent = `${t.yes} έρχονται · ${t.no} όχι`;
+
+  const q = $("search").value.trim().toLocaleLowerCase("el");
+  const strip = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const rows = data.rsvps.filter(r =>
+    (filter === "all" || (filter === "yes") === r.attending) &&
+    (!q || strip(r.name.toLocaleLowerCase("el")).includes(strip(q)))
+  );
+
+  $("rows").innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td class="name">${esc(r.name)}</td>
+      <td><span class="badge ${r.attending ? "yes" : "no"}">${r.attending ? "Έρχεται" : "Δεν έρχεται"}</span></td>
+      <td class="num" data-label="Ενήλικες">${r.adults}</td>
+      <td class="num" data-label="Παιδιά">${r.children}</td>
+      <td class="msg">${esc(r.message)}</td>
+      <td class="date">${fmtDate(r.updated_at)}</td>
+      <td class="act"><button class="del" data-id="${esc(r.id)}" data-name="${esc(r.name)}" title="Διαγραφή">✕</button></td>
+    </tr>`).join("")
+    : `<tr><td colspan="7" class="empty">${data.rsvps.length ? "Κανένα αποτέλεσμα." : "Δεν έχει απαντήσει κανείς ακόμα."}</td></tr>`;
+}
+
+$("login").addEventListener("submit", e => {
+  e.preventDefault();
+  password = $("password").value;
+  setPw(password);
+  load();
+});
+$("logout").addEventListener("click", () => { setPw(""); password = ""; $("password").value = ""; showLogin(); });
+$("refresh").addEventListener("click", load);
+$("search").addEventListener("input", render);
+document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => {
+  filter = b.dataset.filter;
+  document.querySelectorAll("[data-filter]").forEach(x => x.classList.toggle("active", x === b));
+  render();
+}));
+$("rows").addEventListener("click", async e => {
+  const btn = e.target.closest(".del");
+  if (!btn) return;
+  if (!confirm(`Διαγραφή της απάντησης «${btn.dataset.name}»;`)) return;
+  try { await api("DELETE", "?id=" + encodeURIComponent(btn.dataset.id)); load(); }
+  catch (err) { alert(err.message); }
+});
+$("export").addEventListener("click", () => {
+  const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [["Όνομα", "Απάντηση", "Ενήλικες", "Παιδιά", "Μήνυμα", "Ημερομηνία"].map(cell).join(";")];
+  for (const r of data.rsvps) {
+    lines.push([r.name, r.attending ? "Έρχεται" : "Δεν έρχεται", r.adults, r.children, r.message, fmtDate(r.updated_at)].map(cell).join(";"));
+  }
+  const t = data.totals;
+  lines.push("", [cell("ΣΥΝΟΛΟ"), cell(`${t.yes} έρχονται`), t.adults, t.children, cell(`${t.guests} άτομα`)].join(";"));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "apantiseis-gamou.csv" });
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
+setInterval(() => { if (!$("dash").hidden && document.visibilityState === "visible") load(); }, 60000);
+password ? load() : showLogin();
+</script>
+</body>
+</html>
