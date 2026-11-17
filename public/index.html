@@ -369,23 +369,27 @@ const CONFIG = {
   weekday: "Σάββατο",
   date: "12 Ιουνίου 2027",
   dateShort: "12.06.2027",
-  time: "στις 7:00 μ.μ.",
+  time: "στις 6:00 μ.μ.",
   // Ακριβής ώρα έναρξης για την αντίστροφη μέτρηση (ώρα Ελλάδας, θερινή = +03:00)
-  countdownTo: "2027-06-12T19:00:00+03:00",
+  countdownTo: "2027-06-12T18:00:00+03:00",
   placeLine: "Σπάτα · Μαρκόπουλο, Αττική",
 
-  ceremonyName: "Εκκλησάκι Αγίων Πέτρου και Παύλου",
-  ceremonyAddress: "Σπάτα",
-  ceremonyTime: "19:00",
-  ceremonyQuery: "Άγιοι Πέτρος και Παύλος Σπάτα",   // τι ψάχνει ο χάρτης
+  ceremonyName: "Ιερός Ναός Αγίων Αποστόλων Πέτρου και Παύλου",
+  ceremonyAddress: "Αγ. Αποστόλων Πέτρου και Παύλου, Σπάτα 190 04",
+  ceremonyTime: "18:00",
+  ceremonyQuery: "Ιερός Ναός Αγίων Αποστόλων Πέτρου και Παύλου, Σπάτα",
+  ceremonyCid: "3941742124740202534",              // το ακριβές σημείο στο Google Maps
+  ceremonyPlaceId: "ChIJF7qq0gmQoRQRJlBVBZThszY",
   receptionName: "Villa Elia",
-  receptionAddress: "Μαρκόπουλο",
+  receptionAddress: "Νεφέλης, Μυρρινούντος, Μαρκόπουλο Μεσογαίας 190 03",
   receptionTime: "20:30",
-  receptionQuery: "Villa Elia Μαρκόπουλο",
+  receptionQuery: "Villa Elia, Μαρκόπουλο Μεσογαίας",
+  receptionCid: "13474510997466967431",
+  receptionPlaceId: "ChIJgzcBdnORoRQRh-0cdlwU_7o",
 
   // Πρόγραμμα βραδιάς
   program: [
-    { time: "19:00", title: "Μυστήριο", note: "Εκκλησάκι Αγίων Πέτρου και Παύλου" },
+    { time: "18:00", title: "Μυστήριο", note: "Ιερός Ναός Αγίων Αποστόλων Πέτρου και Παύλου" },
     { time: "20:30", title: "Υποδοχή & κοκτέιλ", note: "Villa Elia" },
     { time: "21:30", title: "Δείπνο", note: "" },
     { time: "23:00", title: "Πάρτι μέχρι το πρωί", note: "" },
@@ -484,15 +488,18 @@ cdTimer = setInterval(tick, 1000);
 
 /* ---------- Χάρτης ---------- */
 const VENUES = {
-  ceremony: { name: CONFIG.ceremonyName, addr: CONFIG.ceremonyAddress, q: CONFIG.ceremonyQuery },
-  reception: { name: CONFIG.receptionName, addr: CONFIG.receptionAddress, q: CONFIG.receptionQuery },
+  ceremony: { name: CONFIG.ceremonyName, addr: CONFIG.ceremonyAddress, q: CONFIG.ceremonyQuery, cid: CONFIG.ceremonyCid, pid: CONFIG.ceremonyPlaceId },
+  reception: { name: CONFIG.receptionName, addr: CONFIG.receptionAddress, q: CONFIG.receptionQuery, cid: CONFIG.receptionCid, pid: CONFIG.receptionPlaceId },
 };
 function showVenue(key) {
   const v = VENUES[key];
-  document.getElementById("map").src = `https://maps.google.com/maps?q=${encodeURIComponent(v.q)}&z=15&hl=el&output=embed`;
+  document.getElementById("map").src = v.cid
+    ? `https://maps.google.com/maps?cid=${v.cid}&hl=el&output=embed`
+    : `https://maps.google.com/maps?q=${encodeURIComponent(v.q)}&z=15&hl=el&output=embed`;
   document.getElementById("map-name").textContent = v.name;
   document.getElementById("map-addr").textContent = v.addr;
-  document.getElementById("map-dir").href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(v.q)}`;
+  document.getElementById("map-dir").href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(v.q)}`
+    + (v.pid ? `&destination_place_id=${v.pid}` : "");
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.venue === key)));
   const info = document.querySelector(".map-info");
   info.classList.remove("swap"); void info.offsetWidth; info.classList.add("swap");
