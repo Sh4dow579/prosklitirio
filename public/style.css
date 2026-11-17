@@ -166,8 +166,12 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .envelope-stage.open .env-hint { animation: none; opacity: 0; }
 
 /* ---------------- Κάρτα ---------------- */
+/* πλακάκι σε λεπτές γραμμές (Lovable): μπαίνει σε όλα τα ανοιχτόχρωμα φόντα */
+:root {
+  --tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 80 80'%3E%3Cg opacity='.05'%3E%3Cg fill='none' stroke='%231c47a6' stroke-width='.7'%3E%3Crect width='80' height='80'/%3E%3Ccircle r='16'/%3E%3Ccircle cx='80' r='16'/%3E%3Ccircle cy='80' r='16'/%3E%3Ccircle cx='80' cy='80' r='16'/%3E%3Cpath d='M40 6L74 40L40 74L6 40Z'/%3E%3Ccircle cx='40' cy='40' r='22' stroke-dasharray='1.5 3'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(0 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(45 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(90 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(135 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(180 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(225 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(270 40 40)'/%3E%3Cellipse cx='40' cy='27' rx='4.2' ry='10' transform='rotate(315 40 40)'/%3E%3C/g%3E%3Cg fill='%231c47a6'%3E%3Ccircle cx='40' cy='40' r='3.4'/%3E%3Ccircle r='4'/%3E%3Ccircle cx='80' r='4'/%3E%3Ccircle cy='80' r='4'/%3E%3Ccircle cx='80' cy='80' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
 .card {
-  background: var(--paper);
+  background: var(--tile) center top / 96px 96px, var(--paper);
   overflow: hidden;
   opacity: 0;
   transition: opacity .8s ease;
@@ -198,27 +202,78 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
   min-height: 100vh; min-height: 100svh;
   display: flex; flex-direction: column; text-align: center;
 }
+.hero { position: relative; overflow: hidden; }
 .hero-inner {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 48px 20px 24px;
+  width: 100%; max-width: 80rem; margin: 0 auto; padding: 6rem 1.5rem;
+  will-change: opacity;
 }
-.hero-inner { will-change: transform, opacity; }
-/* είσοδος τίτλων: έρχονται από κάτω θολά και καθαρίζουν, κλιμακωτά */
-.hero-inner > * { opacity: 0; transform: translateY(40px); filter: blur(10px); }
-.card.shown .hero-inner > * { animation: heroIn 1.8s var(--ease-out) both; animation-delay: calc(.7s + var(--i, 0) * .18s); }
-.hero-inner > :nth-child(2) { --i: 1; }
-.hero-inner > :nth-child(3) { --i: 2; }
-.hero-inner > :nth-child(4) { --i: 3; }
-.hero-inner > :nth-child(5) { --i: 4; }
+/* είσοδος: κάθε κομμάτι έρχεται από κάτω θολό και καθαρίζει, με κλιμακωτή καθυστέρηση */
+.hi { opacity: 0; transform: translateY(40px); filter: blur(10px); }
+.card.shown .hi { animation: heroIn 1.8s var(--ease-out) both; animation-delay: calc(.7s + var(--d, 0s)); }
 @keyframes heroIn { to { opacity: 1; transform: none; filter: blur(0); } }
-.hero-place { margin: 18px 0 0; color: var(--muted); }
-.scroll-cue {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding-bottom: 28px; color: var(--muted); text-decoration: none;
+
+/* ονόματα αριστερά/δεξιά, φωτογραφία-αψίδα στη μέση */
+.hero-names {
+  margin: 2.5rem 0 0; width: 100%;
+  display: grid; align-items: center; gap: 1rem;
+  font: inherit;
 }
-.card.shown .scroll-cue { animation: heroIn 1.4s var(--ease-out) 1.8s both; }
-.scroll-cue { opacity: 0; }
-.scroll-cue i { width: 1px; height: 44px; background: currentColor; animation: scrollCue 2.6s var(--ease-cinema) infinite; }
+.hn-wrap { display: block; will-change: transform; }
+.hn {
+  display: block; text-align: center;
+  font-family: var(--display); font-weight: 200; font-style: normal;
+  font-size: clamp(3.75rem, 17vw, 11.5rem); line-height: .88; letter-spacing: -.025em;
+  color: var(--ink);
+}
+.hero-photo { position: relative; display: block; margin: 1rem auto; width: 58vw; max-width: 20rem; }
+.hero-arch {
+  display: block; position: relative; overflow: hidden; aspect-ratio: 3 / 4;
+  border-radius: 999px 999px .25rem .25rem;
+  background: var(--paper-2); box-shadow: var(--shadow-editorial);
+}
+.hero-arch img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transform: translateY(var(--py, 0%)) scale(1.18); will-change: transform;
+}
+.hero-arch.empty {
+  display: grid; place-items: center; border: 1px dashed #b9c2da;
+  background: repeating-linear-gradient(45deg, var(--paper-2) 0 12px, #efe9db 12px 24px);
+}
+.hero-arch.empty span {
+  font-family: var(--serif); font-weight: 500; font-size: .66rem; letter-spacing: .38em; text-transform: uppercase;
+  color: var(--muted); background: var(--paper); padding: 6px 12px; border-radius: 99px;
+}
+.hero-amp {
+  position: absolute; left: 50%; bottom: -1.75rem; transform: translateX(-50%);
+  font-family: var(--display); font-style: italic; font-weight: 200; font-size: 3.75rem; line-height: 1;
+  color: var(--gold);
+}
+
+.hero-when { margin-top: 3.5rem; text-align: center; }
+.hero-date { margin: 0; font-family: var(--display); font-weight: 300; font-size: 1.25rem; color: var(--ink); }
+.hero-loc { margin: .75rem 0 0; color: var(--cobalt) !important; }
+.hero-lead {
+  margin: 1.5rem auto 0; max-width: 34ch; text-wrap: balance;
+  font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1.05rem; color: var(--muted);
+}
+
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 1.5rem; margin-left: -3rem; width: 6rem;
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  color: var(--muted); text-decoration: none;
+}
+.scroll-cue span { font-size: .55rem !important; }
+.scroll-cue i { width: 1px; height: 2.5rem; background: currentColor; opacity: .6; animation: scrollCue 2.6s var(--ease-cinema) infinite; }
+
+@media (min-width: 768px) {
+  .hero-names { grid-template-columns: 1fr auto 1fr; gap: 3rem; margin-top: 3.5rem; }
+  .hn-left .hn { text-align: right; }
+  .hn-right .hn { text-align: left; }
+  .hn { font-size: clamp(4rem, 8.5vw, 10rem); }
+  .hero-photo { width: 22vw; margin: 0; }
+  .hero-date { font-size: 1.5rem; }
+}
 @keyframes scrollCue {
   0%   { transform-origin: top; transform: scaleY(0); }
   45%  { transform-origin: top; transform: scaleY(1); }
@@ -276,29 +331,72 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .chapter-text p:last-child { margin: 0; }
 
 /* ---------------- Η μέρα του γάμου ---------------- */
-.big-date { margin: 14px 0 0; font-family: var(--display); font-size: 26px; color: var(--ink); }
-.venues { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 820px; margin: 0 auto; }
-.venue {
-  text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 4px;
-  padding: 36px 24px; position: relative;
+/* σκούρο φόντο «ink» με αχνό μοτίβο πλακακιών σε γραμμές (όπως στο Lovable) */
+.wd {
+  --wd-ink: #091328; --wd-fg: #f5efe4; --wd-gold: #d1aa6e;
+  position: relative; overflow: hidden;
+  background: var(--wd-ink); color: var(--wd-fg);
+  padding: 7rem 0;
 }
-.venue::before { content: ""; position: absolute; inset: 6px; border: 1px solid var(--line); border-radius: 2px; pointer-events: none; }
-.venue-label { margin: 0 0 10px; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--sky); }
-.venue h3 { margin: 0; font-style: italic; font-weight: 400; font-size: 26px; line-height: 1.2; color: var(--cobalt); text-wrap: balance; }
-.venue-addr { margin: 6px 0 0; color: var(--muted); }
+.wd-pattern { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; color: var(--wd-fg); opacity: .04; }
+.wd-inner { position: relative; max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
 
-.program { max-width: 520px; margin: 72px auto 0; }
-.program-title { margin: 0 0 28px; text-align: center; font-family: var(--display); font-weight: 400; font-size: 14px; letter-spacing: .28em; text-transform: uppercase; color: var(--cobalt); }
-.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
-.timeline::before { content: ""; position: absolute; left: 76px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
-.timeline li { display: grid; grid-template-columns: 64px 1fr; gap: 28px; padding: 12px 0; position: relative; }
-.timeline li::before {
-  content: ""; position: absolute; left: 72px; top: 21px; width: 9px; height: 9px; border-radius: 50%;
-  background: var(--paper); border: 1px solid var(--cobalt);
+.wd-eyebrow {
+  margin: 0; font-family: var(--serif); font-weight: 500;
+  font-size: .66rem; letter-spacing: .38em; text-transform: uppercase; color: var(--wd-gold);
 }
-.timeline time { text-align: right; font-family: var(--display); font-size: 18px; color: var(--cobalt); padding-top: 2px; }
-.timeline strong { display: block; font-weight: 500; font-size: 19px; }
-.timeline small { display: block; color: var(--muted); font-style: italic; font-size: 15px; }
+.wd-dot { margin: 0 .5rem; opacity: .6; }
+
+.wd-head { text-align: center; max-width: 48rem; margin: 0 auto; }
+.wd-title {
+  margin: 1.25rem 0 0; font-family: var(--display); font-weight: 200; font-style: normal;
+  font-size: clamp(2.75rem, 10vw, 7rem); line-height: .95; letter-spacing: -.02em; text-wrap: balance;
+  color: var(--wd-fg);
+}
+.wd-orn { display: block; width: 7rem; height: 1rem; margin: 1.75rem auto 0; color: var(--wd-gold); }
+
+/* τεράστια ημερομηνία: μήνας · ΗΜΕΡΑ · έτος */
+.wd-date {
+  margin-top: 3.5rem; display: flex; align-items: flex-end; justify-content: center; gap: 1rem;
+  font-family: var(--display); font-weight: 200;
+}
+.wd-side { padding-bottom: 1rem; font-style: italic; color: var(--wd-gold); font-size: clamp(1.25rem, 5vw, 2.5rem); }
+.wd-day { font-size: clamp(7.5rem, 34vw, 17rem); line-height: .78; letter-spacing: -.05em; }
+
+/* οι δύο χώροι */
+.wd-venues { margin-top: 6rem; display: grid; gap: 5rem; }
+.wd-venue .photo { aspect-ratio: 4 / 5; box-shadow: none; background: rgba(255,255,255,.04); }
+.wd-venue .photo.empty { border-color: rgba(245,239,228,.18); background: repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0 12px, rgba(255,255,255,.06) 12px 24px); }
+.wd-venue .photo.empty span { background: var(--wd-ink); color: rgba(245,239,228,.6); }
+.wd-arch { border-radius: 999px 999px .25rem .25rem; }
+.wd-venue > div { margin-top: 2.25rem; }
+.wd-name {
+  margin: 1rem 0 0; font-family: var(--display); font-weight: 300; font-style: normal;
+  font-size: clamp(2rem, 6vw, 3.75rem); line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; color: var(--wd-fg);
+}
+.wd-place { margin: .75rem 0 0; font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1.125rem; color: rgba(245,239,228,.7); }
+
+/* πρόγραμμα */
+.wd-program { max-width: 42rem; margin: 7rem auto 0; }
+.wd-program > .wd-eyebrow { text-align: center; }
+.wd-list { list-style: none; margin: 2.5rem 0 0; padding: 0; border-block: 1px solid rgba(245,239,228,.15); }
+.wd-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; padding: 1.25rem 0; }
+.wd-list li + li { border-top: 1px solid rgba(245,239,228,.15); }
+.wd-list time { font-family: var(--display); font-weight: 200; font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.wd-item { text-align: right; font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1rem; color: rgba(245,239,228,.8); }
+.wd-item small { display: block; font-size: .85em; color: rgba(245,239,228,.5); }
+
+@media (min-width: 768px) {
+  .wd { padding: 11rem 0; }
+  .wd-date { margin-top: 5rem; gap: 2.5rem; }
+  .wd-side { padding-bottom: 2rem; }
+  .wd-venues { margin-top: 9rem; grid-template-columns: 1fr 1fr; gap: 3.5rem; }
+  .wd-venue:nth-child(2) { margin-top: 10rem; }
+  .wd-program { margin-top: 10rem; }
+  .wd-list li { padding: 1.5rem 0; }
+  .wd-list time { font-size: 2.25rem; }
+  .wd-item { font-size: 1.25rem; }
+}
 
 /* ---------------- Countdown ---------------- */
 .countdown { background: radial-gradient(120% 90% at 50% 0%, var(--navy-2), var(--navy) 65%, #0d1b3a); color: #fff; text-align: center; }
@@ -391,7 +489,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 }
 
 /* ---------------- RSVP ---------------- */
-.rsvp { padding: 72px 20px 88px; background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.rsvp { padding: 72px 20px 88px; background: var(--tile) center top / 96px 96px, var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .rsvp .divider { margin: 0 auto 32px; }
 .rsvp form { background: var(--paper); padding: 28px 24px; border: 1px solid var(--line); border-radius: 8px; }
 .rsvp-title {
@@ -547,7 +645,6 @@ input[type=text]:focus, textarea:focus {
   .chapter { grid-template-columns: 1fr; gap: 20px; }
   .chapter:nth-child(even) .photo { order: 0; }
   .chapter .photo { aspect-ratio: 4 / 3; }
-  .venues { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
   body { font-size: 15.5px; }
@@ -559,15 +656,12 @@ input[type=text]:focus, textarea:focus {
   .cd-cell > span { font-size: 9px; letter-spacing: .12em; }
   .map-frame { aspect-ratio: 4 / 3; }
   .map-info .btn { width: 100%; text-align: center; }
-  .timeline::before { left: 60px; }
-  .timeline li { grid-template-columns: 50px 1fr; gap: 24px; }
-  .timeline li::before { left: 56px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
-  .reveal, .hero-inner > *, .scroll-cue, .mono-text { opacity: 1; transform: none; filter: none; }
+  .reveal, .hi, .mono-text { opacity: 1; transform: none; filter: none; }
   .photo { clip-path: none; }
   .mono-ring circle { stroke-dashoffset: 0; }
 }

@@ -185,23 +185,25 @@
 
   <!-- ============ 1. HERO ============ -->
   <section class="hero grain">
-    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
     <div class="hero-inner">
-      <p class="eyebrow" data-cfg="intro"></p>
-      <h1 class="names">
-        <span data-cfg="bride"></span>
-        <span class="amp">&amp;</span>
-        <span data-cfg="groom"></span>
+      <p class="eyebrow hi" style="--d:0s" data-cfg="intro"></p>
+
+      <h1 class="hero-names">
+        <span class="hn-wrap hn-left"><span class="hn hi" style="--d:.15s" data-cfg="bride"></span></span>
+        <span class="hero-photo hi" style="--d:.3s">
+          <span class="hero-arch" data-photo="hero"></span>
+          <span class="hero-amp" aria-label="και">&amp;</span>
+        </span>
+        <span class="hn-wrap hn-right"><span class="hn hi" style="--d:.45s" data-cfg="groom"></span></span>
       </h1>
-      <p class="lead" data-cfg="invitationText"></p>
-      <div class="when">
-        <span class="when-day" data-cfg="weekday"></span>
-        <span class="when-date" data-cfg="date"></span>
-        <span class="when-time" data-cfg="time"></span>
+
+      <div class="hero-when hi" style="--d:.65s">
+        <p class="hero-date"><span data-cfg="weekday"></span> <span data-cfg="date"></span> · <span data-cfg="ceremonyTime"></span></p>
+        <p class="eyebrow hero-loc" data-cfg="placeLine"></p>
+        <p class="hero-lead" data-cfg="invitationText"></p>
       </div>
-      <p class="hero-place" data-cfg="placeLine"></p>
     </div>
-    <a class="scroll-cue" href="#story" aria-label="Συνέχεια προς τα κάτω"><span>Συνέχεια</span><i></i></a>
+    <a class="scroll-cue hi" style="--d:1s" href="#story" aria-label="Συνέχεια προς τα κάτω"><span>Συνέχεια</span><i></i></a>
   </section>
 
   <!-- ============ 2. Η ΙΣΤΟΡΙΑ ΜΑΣ ============ -->
@@ -215,29 +217,75 @@
   </section>
 
   <!-- ============ 4. Η ΜΕΡΑ ΤΟΥ ΓΑΜΟΥ ============ -->
-  <section class="sec day" id="day">
-    <header class="sec-head reveal">
-      <p class="kicker" data-cfg="weekday"></p>
-      <h2 class="sec-title">Η μέρα του γάμου</h2>
-      <p class="big-date" data-cfg="date"></p>
-    </header>
+  <section class="wd" id="day">
+    <!-- μοτίβο πλακακιών σε γραμμές, πολύ αχνό -->
+    <svg class="wd-pattern" aria-hidden="true">
+      <defs>
+        <pattern id="wdTile" width="120" height="120" patternUnits="userSpaceOnUse" viewBox="0 0 80 80">
+          <g fill="none" stroke="currentColor" stroke-width=".7">
+            <rect width="80" height="80"/>
+            <circle r="16"/><circle cx="80" r="16"/><circle cy="80" r="16"/><circle cx="80" cy="80" r="16"/>
+            <path d="M40 6 L74 40 L40 74 L6 40 Z"/>
+            <circle cx="40" cy="40" r="22" stroke-dasharray="1.5 3"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(45 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(90 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(135 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(180 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(225 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(270 40 40)"/>
+            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(315 40 40)"/>
+          </g>
+          <g fill="currentColor">
+            <circle cx="40" cy="40" r="3.4"/>
+            <circle r="4"/><circle cx="80" r="4"/><circle cy="80" r="4"/><circle cx="80" cy="80" r="4"/>
+          </g>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#wdTile)"/>
+    </svg>
 
-    <div class="venues">
-      <article class="venue reveal">
-        <p class="venue-label">Μυστήριο · <span data-cfg="ceremonyTime"></span></p>
-        <h3 data-cfg="ceremonyName"></h3>
-        <p class="venue-addr" data-cfg="ceremonyAddress"></p>
-      </article>
-      <article class="venue reveal">
-        <p class="venue-label">Δεξίωση · <span data-cfg="receptionTime"></span></p>
-        <h3 data-cfg="receptionName"></h3>
-        <p class="venue-addr" data-cfg="receptionAddress"></p>
-      </article>
-    </div>
+    <div class="wd-inner">
+      <header class="wd-head reveal">
+        <p class="wd-eyebrow" data-cfg="weekday"></p>
+        <h2 class="wd-title">Η μέρα του γάμου</h2>
+        <svg class="wd-orn" viewBox="0 0 120 16" aria-hidden="true">
+          <line x1="0" y1="8" x2="48" y2="8" stroke="currentColor" stroke-width=".6"/>
+          <line x1="72" y1="8" x2="120" y2="8" stroke="currentColor" stroke-width=".6"/>
+          <path d="M60 1 L67 8 L60 15 L53 8 Z" fill="none" stroke="currentColor" stroke-width=".8"/>
+          <circle cx="60" cy="8" r="1.8" fill="currentColor"/>
+        </svg>
+      </header>
 
-    <div class="program reveal">
-      <h3 class="program-title">Το πρόγραμμα της βραδιάς</h3>
-      <ol class="timeline" id="timeline"></ol>
+      <div class="wd-date reveal" aria-label="">
+        <span class="wd-side" data-cfg="dateMonth"></span>
+        <span class="wd-day" data-cfg="dateDay"></span>
+        <span class="wd-side" data-cfg="dateYear"></span>
+      </div>
+
+      <div class="wd-venues">
+        <article class="wd-venue">
+          <figure class="photo wd-arch" data-photo="ceremony"></figure>
+          <div class="reveal">
+            <p class="wd-eyebrow">Μυστήριο <span class="wd-dot">·</span> <span data-cfg="ceremonyTime"></span></p>
+            <h3 class="wd-name" data-cfg="ceremonyName"></h3>
+            <p class="wd-place" data-cfg="ceremonyAddress"></p>
+          </div>
+        </article>
+        <article class="wd-venue">
+          <figure class="photo" data-photo="reception"></figure>
+          <div class="reveal">
+            <p class="wd-eyebrow">Δεξίωση <span class="wd-dot">·</span> <span data-cfg="receptionTime"></span></p>
+            <h3 class="wd-name" data-cfg="receptionName"></h3>
+            <p class="wd-place" data-cfg="receptionAddress"></p>
+          </div>
+        </article>
+      </div>
+
+      <div class="wd-program reveal">
+        <p class="wd-eyebrow">Το πρόγραμμα της βραδιάς</p>
+        <ol class="wd-list" id="timeline"></ol>
+      </div>
     </div>
   </section>
 
@@ -369,6 +417,7 @@ const CONFIG = {
   weekday: "Σάββατο",
   date: "12 Ιουνίου 2027",
   dateShort: "12.06.2027",
+  dateDay: "12", dateMonth: "Ιουνίου", dateYear: "2027",   // για τη μεγάλη ημερομηνία
   time: "στις 6:00 μ.μ.",
   // Ακριβής ώρα έναρξης για την αντίστροφη μέτρηση (ώρα Ελλάδας, θερινή = +03:00)
   countdownTo: "2027-06-12T18:00:00+03:00",
@@ -411,6 +460,8 @@ const CONFIG = {
   // Όσες μείνουν κενές εμφανίζονται ως πλαίσιο «Φωτογραφία».
   photos: {
     story1: "", story2: "", story3: "",
+    hero: "/photos/hero.jpg",         // η φωτογραφία ανάμεσα στα ονόματα (προσωρινή, από το Lovable)
+    ceremony: "", reception: "",
     thankyou: "",
   },
 };
@@ -431,7 +482,8 @@ document.getElementById("chapters").innerHTML = CONFIG.story.map((c, i) => `
   </article>`).join("");
 
 document.getElementById("timeline").innerHTML = CONFIG.program.map(p => `
-  <li><time>${esc(p.time)}</time><div><strong>${esc(p.title)}</strong>${p.note ? `<small>${esc(p.note)}</small>` : ""}</div></li>`).join("");
+  <li><time>${esc(p.time)}</time><div class="wd-item"><span>${esc(p.title)}</span>${p.note ? `<small>${esc(p.note)}</small>` : ""}</div></li>`).join("");
+document.querySelector(".wd-date").setAttribute("aria-label", CONFIG.date);
 
 document.querySelectorAll("[data-cfg]").forEach(el => { el.textContent = CONFIG[el.dataset.cfg] ?? ""; });
 document.title = `${CONFIG.bride} & ${CONFIG.groom} — Προσκλητήριο`;
@@ -519,16 +571,21 @@ function startReveal() {
   targets.forEach(el => io.observe(el));
 }
 
+const heroEl = document.querySelector(".hero");
 const heroInner = document.querySelector(".hero-inner");
+const hnLeft = document.querySelector(".hn-left"), hnRight = document.querySelector(".hn-right");
 const parallaxImgs = () => document.querySelectorAll(".photo img");
 let ticking = false;
 function onScroll() {
   ticking = false;
   const vh = innerHeight;
-  // hero: τα γράμματα κατεβαίνουν λίγο και σβήνουν καθώς κατεβαίνει η σελίδα
-  const p = Math.min(1, Math.max(0, scrollY / vh));
-  heroInner.style.transform = `translateY(${p * 14}%)`;
+  // hero: τα ονόματα ανοίγουν προς τα πλάγια, η φωτογραφία κινείται αργά, όλα σβήνουν
+  const p = Math.min(1, Math.max(0, scrollY / heroEl.offsetHeight));
   heroInner.style.opacity = String(Math.max(0, 1 - p / 0.7));
+  hnLeft.style.transform = `translateX(${-40 * p}%)`;
+  hnRight.style.transform = `translateX(${40 * p}%)`;
+  const heroImg = heroEl.querySelector(".hero-arch img");
+  if (heroImg) heroImg.style.setProperty("--py", `${14 * p}%`);
   // φωτογραφίες: η εικόνα κινείται πιο αργά από το πλαίσιο
   parallaxImgs().forEach(img => {
     const r = img.parentElement.getBoundingClientRect();
