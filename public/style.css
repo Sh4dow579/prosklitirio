@@ -411,7 +411,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
   background: #f1e8da; color: #121f37;
   padding-bottom: 6rem;
 }
-.cd-strip { height: 40px; background: var(--tile-strip) left center / 40px 40px repeat-x; }
+.cd-strip { height: 40px; background: var(--tile-strip) left center / 40px 40px repeat-x, #f1e8da; }
 .cd-inner { padding: 5rem 1rem 0; }
 .cd-eyebrow {
   margin: 0; font-family: var(--serif); font-weight: 500;
