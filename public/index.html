@@ -290,20 +290,17 @@
   </section>
 
   <!-- ============ 5. COUNTDOWN ============ -->
-  <section class="countdown grain" id="countdown">
-    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
+  <section class="countdown" id="countdown" aria-label="Αντίστροφη μέτρηση">
+    <div class="cd-strip" aria-hidden="true"></div>
     <div class="cd-inner reveal">
-      <h2 class="sec-title">Αντίστροφη μέτρηση</h2>
+      <p class="cd-eyebrow" id="cd-label">Μετράμε τις μέρες</p>
       <div class="cd-grid" id="cd-grid" aria-live="off">
         <div class="cd-cell"><b id="cd-days">—</b><span>Μέρες</span></div>
         <div class="cd-cell"><b id="cd-hours">—</b><span>Ώρες</span></div>
         <div class="cd-cell"><b id="cd-mins">—</b><span>Λεπτά</span></div>
         <div class="cd-cell"><b id="cd-secs">—</b><span>Δευτερόλεπτα</span></div>
       </div>
-      <p class="cd-done" id="cd-done" hidden>Ήρθε η μεγάλη μέρα!</p>
-      <p class="cd-place" data-cfg="placeLine"></p>
     </div>
-    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
   </section>
 
   <!-- ============ 6. ΧΑΡΤΗΣ & ΟΔΗΓΙΕΣ ============ -->
@@ -525,12 +522,12 @@ function tick() {
   const diff = target - Date.now();
   if (!(diff > 0)) {
     clearInterval(cdTimer);
-    document.getElementById("cd-grid").hidden = true;
-    document.getElementById("cd-done").hidden = false;
+    document.getElementById("cd-label").textContent = "Ήρθε η μεγάλη μέρα";
+    [cd.d, cd.h, cd.m, cd.s].forEach(el => setDigit(el, "00"));
     return;
   }
   const s = Math.floor(diff / 1000);
-  setDigit(cd.d, Math.floor(s / 86400));
+  setDigit(cd.d, pad(Math.floor(s / 86400)));
   setDigit(cd.h, pad(Math.floor(s / 3600) % 24));
   setDigit(cd.m, pad(Math.floor(s / 60) % 60));
   setDigit(cd.s, pad(s % 60));
