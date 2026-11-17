@@ -17,31 +17,78 @@
 <!-- Κοινά SVG σχέδια (πλακάκι azulejo, μονόγραμμα) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
+    <!-- «ζωγραφισμένο στο χέρι»: ελαφρώς ακανόνιστες πινελιές -->
+    <filter id="handpaint" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.25"/>
+    </filter>
+    <!-- κηλίδες στο σμάλτο (ανομοιομορφία χρώματος) -->
+    <filter id="mottle" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="9"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 -.18"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <radialGradient id="glaze" cx="35%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#fffefb"/><stop offset=".7" stop-color="#f4f0e6"/><stop offset="1" stop-color="#e9e3d6"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".07"/>
+    </linearGradient>
+    <!-- ανάγλυφο χαρτί φακέλου -->
+    <filter id="paperTex" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.09 0.34" numOctaves="3" seed="5" result="n1"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.3 0.09" numOctaves="2" seed="11" result="n2"/>
+      <feComposite in="n1" in2="n2" operator="arithmetic" k2=".6" k3=".4" result="n"/>
+      <feDiffuseLighting in="n" surfaceScale="1.8" lighting-color="#fff" result="lit"><feDistantLight azimuth="235" elevation="48"/></feDiffuseLighting>
+      <feColorMatrix in="lit" type="saturate" values="0"/>
+    </filter>
+    <path id="petal" d="M50 50 C43 42 43 31 50 21 C57 31 57 42 50 50Z"/>
+    <path id="leaf" d="M70 30 C77 25 83 21 87 13 C79 15 73 21 70 30Z"/>
+
     <symbol id="azulejo" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fbf8f1"/>
-      <g fill="none" stroke="#1d4596" stroke-width="2.2">
-        <rect x="1.1" y="1.1" width="97.8" height="97.8" stroke-width="1.4"/>
-        <circle cx="50" cy="50" r="30"/>
-        <path d="M0 22 A22 22 0 0 0 22 0 M78 0 A22 22 0 0 0 100 22 M100 78 A22 22 0 0 0 78 100 M22 100 A22 22 0 0 0 0 78"/>
+      <rect width="100" height="100" fill="url(#glaze)"/>
+      <g filter="url(#handpaint)">
+        <!-- απαλό γαλάζιο «ξέπλυμα» -->
+        <g fill="#8fb0e3" opacity=".75">
+          <circle cx="50" cy="50" r="27"/>
+          <circle cx="0" cy="0" r="17"/><circle cx="100" cy="0" r="17"/><circle cx="0" cy="100" r="17"/><circle cx="100" cy="100" r="17"/>
+          <circle cx="50" cy="0" r="8"/><circle cx="50" cy="100" r="8"/><circle cx="0" cy="50" r="8"/><circle cx="100" cy="50" r="8"/>
+        </g>
+        <!-- κεντρικό λουλούδι -->
+        <g fill="#2f5cb0" stroke="#173a86" stroke-width="1.3" stroke-linejoin="round">
+          <use href="#petal"/><use href="#petal" transform="rotate(45 50 50)"/><use href="#petal" transform="rotate(90 50 50)"/><use href="#petal" transform="rotate(135 50 50)"/>
+          <use href="#petal" transform="rotate(180 50 50)"/><use href="#petal" transform="rotate(225 50 50)"/><use href="#petal" transform="rotate(270 50 50)"/><use href="#petal" transform="rotate(315 50 50)"/>
+        </g>
+        <circle cx="50" cy="50" r="29.5" fill="none" stroke="#173a86" stroke-width="2.6"/>
+        <circle cx="50" cy="50" r="33" fill="none" stroke="#173a86" stroke-width=".9" stroke-dasharray="1.6 2.4"/>
+        <circle cx="50" cy="50" r="8" fill="#173a86"/>
+        <circle cx="50" cy="50" r="3.4" fill="#f6f2e8"/>
+        <!-- φύλλα στις διαγώνιους -->
+        <g fill="#4a78c8" stroke="#173a86" stroke-width="1">
+          <use href="#leaf"/><use href="#leaf" transform="rotate(90 50 50)"/><use href="#leaf" transform="rotate(180 50 50)"/><use href="#leaf" transform="rotate(270 50 50)"/>
+        </g>
+        <!-- γωνίες: σχηματίζουν ροζέτα με τα διπλανά πλακάκια -->
+        <g fill="none" stroke="#173a86">
+          <path stroke-width="3" d="M0 15 A15 15 0 0 0 15 0 M85 0 A15 15 0 0 0 100 15 M100 85 A15 15 0 0 0 85 100 M15 100 A15 15 0 0 0 0 85"/>
+          <path stroke-width="1.2" d="M0 21 A21 21 0 0 0 21 0 M79 0 A21 21 0 0 0 100 21 M100 79 A21 21 0 0 0 79 100 M21 100 A21 21 0 0 0 0 79"/>
+        </g>
+        <g fill="#173a86">
+          <circle cx="0" cy="0" r="7"/><circle cx="100" cy="0" r="7"/><circle cx="0" cy="100" r="7"/><circle cx="100" cy="100" r="7"/>
+          <!-- μισοί κύκλοι στις μεσαίες ακμές -->
+          <path d="M42 0 A8 8 0 0 0 58 0Z M42 100 A8 8 0 0 1 58 100Z M0 42 A8 8 0 0 1 0 58Z M100 42 A8 8 0 0 0 100 58Z"/>
+          <circle cx="50" cy="13" r="1.8"/><circle cx="50" cy="87" r="1.8"/><circle cx="13" cy="50" r="1.8"/><circle cx="87" cy="50" r="1.8"/>
+          <circle cx="27" cy="12" r="1.3"/><circle cx="73" cy="12" r="1.3"/><circle cx="27" cy="88" r="1.3"/><circle cx="73" cy="88" r="1.3"/>
+          <circle cx="12" cy="27" r="1.3"/><circle cx="12" cy="73" r="1.3"/><circle cx="88" cy="27" r="1.3"/><circle cx="88" cy="73" r="1.3"/>
+        </g>
+        <g fill="#f6f2e8"><circle cx="50" cy="0" r="3"/><circle cx="50" cy="100" r="3"/><circle cx="0" cy="50" r="3"/><circle cx="100" cy="50" r="3"/></g>
       </g>
-      <g fill="#1d4596">
-        <path d="M50 20 C56 30 56 38 50 44 C44 38 44 30 50 20Z"/>
-        <path d="M50 80 C56 70 56 62 50 56 C44 62 44 70 50 80Z"/>
-        <path d="M20 50 C30 44 38 44 44 50 C38 56 30 56 20 50Z"/>
-        <path d="M80 50 C70 44 62 44 56 50 C62 56 70 56 80 50Z"/>
-        <path d="M0 0 L16 0 C14 8 8 14 0 16Z M100 0 L84 0 C86 8 92 14 100 16Z M100 100 L84 100 C86 92 92 86 100 84Z M0 100 L16 100 C14 92 8 86 0 84Z"/>
-        <circle cx="50" cy="50" r="5"/>
-      </g>
-      <g fill="#5d86d1">
-        <path d="M29 29 C36 30 40 34 41 41 C34 40 30 36 29 29Z"/>
-        <path d="M71 29 C64 30 60 34 59 41 C66 40 70 36 71 29Z"/>
-        <path d="M71 71 C64 70 60 66 59 59 C66 60 70 64 71 71Z"/>
-        <path d="M29 71 C36 70 40 66 41 59 C34 60 30 64 29 71Z"/>
-      </g>
-      <g fill="#5d86d1">
-        <circle cx="50" cy="6" r="2.4"/><circle cx="50" cy="94" r="2.4"/>
-        <circle cx="6" cy="50" r="2.4"/><circle cx="94" cy="50" r="2.4"/>
-      </g>
+      <!-- γυαλάδα σμάλτου, ανάγλυφο, αρμός -->
+      <rect width="100" height="100" fill="url(#sheen)"/>
+      <path d="M2.5 97.5 V2.5 H97.5" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.2"/>
+      <path d="M97.5 2.5 V97.5 H2.5" fill="none" stroke="#000" stroke-opacity=".08" stroke-width="1.2"/>
+      <rect x=".9" y=".9" width="98.2" height="98.2" fill="none" stroke="#d8d1c2" stroke-width="1.8"/>
     </symbol>
     <pattern id="tiles" width="64" height="64" patternUnits="userSpaceOnUse">
       <use href="#azulejo" width="64" height="64"/>
@@ -51,15 +98,15 @@
 
 <!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή) ============ -->
 <div class="envelope-stage" id="envelope" role="button" tabindex="0" aria-label="Ανοίξτε το προσκλητήριο">
-  <svg class="stage-tiles" aria-hidden="true"><rect width="100%" height="100%" fill="url(#tiles)"/></svg>
+
   <div class="env-float">
     <div class="envelope">
       <!-- εσωτερικό φακέλου με πλακάκια -->
-      <div class="env-back"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+      <div class="env-back"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
 
       <!-- κάρτα που βγαίνει από τον φάκελο -->
       <div class="letter">
-        <div class="letter-band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+        <div class="letter-band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
         <p class="letter-names"><span data-cfg="bride"></span> <em>&amp;</em> <span data-cfg="groom"></span></p>
         <p class="letter-date" data-cfg="date"></p>
       </div>
@@ -67,35 +114,37 @@
       <!-- μπροστινή πλευρά (τσέπη) -->
       <svg class="env-front" viewBox="0 0 700 500" preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id="gSide" x1="0" x2="1"><stop offset="0" stop-color="#f3efe6"/><stop offset="1" stop-color="#fbf9f4"/></linearGradient>
-          <linearGradient id="gSideR" x1="1" x2="0"><stop offset="0" stop-color="#efeadf"/><stop offset="1" stop-color="#faf8f2"/></linearGradient>
-          <linearGradient id="gBottom" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fffdf9"/><stop offset="1" stop-color="#f6f2ea"/></linearGradient>
+          <linearGradient id="gSide" x1="0" x2="1"><stop offset="0" stop-color="#132560"/><stop offset="1" stop-color="#1a3074"/></linearGradient>
+          <linearGradient id="gSideR" x1="1" x2="0"><stop offset="0" stop-color="#11225a"/><stop offset="1" stop-color="#182d6e"/></linearGradient>
+          <linearGradient id="gBottom" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#16296a"/><stop offset="1" stop-color="#1e357e"/></linearGradient>
           <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>
+          <clipPath id="frontClip"><path d="M0 0 L352 282 L0 500Z"/><path d="M700 0 L348 282 L700 500Z"/><path d="M0 500 L350 232 L700 500Z"/></clipPath>
         </defs>
         <path d="M0 0 L352 282 L0 500Z" fill="url(#gSide)"/>
         <path d="M700 0 L348 282 L700 500Z" fill="url(#gSideR)"/>
-        <path d="M0 500 L350 228 L700 500Z" fill="#000" opacity=".07" filter="url(#soft)" transform="translate(0,-4)"/>
+        <path d="M0 500 L350 228 L700 500Z" fill="#000" opacity=".3" filter="url(#soft)" transform="translate(0,-4)"/>
         <path d="M0 500 L350 232 L700 500Z" fill="url(#gBottom)"/>
-        <path d="M0 500 L350 232 L700 500" fill="none" stroke="#e4ddcf" stroke-width="1.2"/>
-        <rect x="14" y="14" width="672" height="472" fill="none" stroke="#1d4596" stroke-opacity=".18" stroke-width="1"/>
+        <g clip-path="url(#frontClip)" style="mix-blend-mode:soft-light" opacity=".55"><rect width="700" height="500" filter="url(#paperTex)"/></g>
+        <path d="M0 500 L350 232 L700 500" fill="none" stroke="#2c4592" stroke-width="1.2"/>
+        
       </svg>
-      <p class="env-front-text"><span data-cfg="bride"></span> &amp; <span data-cfg="groom"></span></p>
 
       <!-- σκιά κάτω από το καπάκι -->
       <svg class="flap-shadow" viewBox="0 0 700 300" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 4 L350 306 L700 4" fill="none" stroke="#14264f" stroke-opacity=".22" stroke-width="10" filter="url(#soft)"/>
+        <path d="M0 4 L350 306 L700 4" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="10" filter="url(#soft)"/>
       </svg>
 
       <!-- καπάκι: έξω λευκό, μέσα πλακάκια -->
       <div class="env-flap">
         <div class="flap-face flap-out">
           <svg viewBox="0 0 700 300" preserveAspectRatio="none">
-            <defs><linearGradient id="gFlap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfbf7"/><stop offset="1" stop-color="#f1ece2"/></linearGradient></defs>
+            <defs><linearGradient id="gFlap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e3580"/><stop offset="1" stop-color="#172b6c"/></linearGradient></defs>
             <path d="M0 0 L700 0 L350 300Z" fill="url(#gFlap)"/>
-            <path d="M0 0 L350 300 L700 0" fill="none" stroke="#e2dacb" stroke-width="1.5"/>
+            <rect width="700" height="300" filter="url(#paperTex)" style="mix-blend-mode:soft-light" opacity=".55"/>
+            <path d="M0 0 L350 300 L700 0" fill="none" stroke="#2c4592" stroke-width="1.5"/>
           </svg>
         </div>
-        <div class="flap-face flap-in"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+        <div class="flap-face flap-in"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
       </div>
 
       <!-- σφραγίδα από βουλοκέρι -->
@@ -103,13 +152,24 @@
         <svg viewBox="0 0 100 100" aria-hidden="true">
           <defs>
             <radialGradient id="gWax" cx="38%" cy="32%" r="75%">
-              <stop offset="0" stop-color="#4f7fd6"/><stop offset=".45" stop-color="#1f4ea8"/><stop offset="1" stop-color="#132f6e"/>
+              <stop offset="0" stop-color="#fff4c8"/><stop offset=".22" stop-color="#f5d572"/><stop offset=".55" stop-color="#d9a83a"/><stop offset=".85" stop-color="#a87418"/><stop offset="1" stop-color="#7d520c"/>
             </radialGradient>
           </defs>
           <path d="M50 3 C61 3 66 9 75 11 C85 14 90 22 93 31 C97 41 95 50 97 59 C98 70 91 77 86 84 C79 93 69 95 59 97 C49 99 41 96 32 94 C21 91 13 86 8 76 C3 67 5 58 3 48 C2 37 7 29 13 21 C20 12 29 8 39 5 C43 4 46 3 50 3Z" fill="url(#gWax)"/>
-          <circle cx="50" cy="50" r="33" fill="none" stroke="#0f2659" stroke-opacity=".45" stroke-width="2.5"/>
-          <circle cx="50" cy="50" r="30" fill="none" stroke="#9fbcf0" stroke-opacity=".35" stroke-width="1"/>
-          <ellipse cx="36" cy="27" rx="12" ry="6" fill="#fff" opacity=".18" transform="rotate(-25 36 27)"/>
+          <circle cx="50" cy="50" r="33" fill="none" stroke="#8a5d0e" stroke-opacity=".55" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="30" fill="none" stroke="#fff6d6" stroke-opacity=".85" stroke-width="1"/>
+          <ellipse cx="36" cy="27" rx="12" ry="6" fill="#fffbe8" opacity=".7" transform="rotate(-25 36 27)"/>
+          <!-- διακοσμητικές έλικες -->
+          <g fill="none" stroke="#8a5d0e" stroke-opacity=".7" stroke-width="1.3" stroke-linecap="round">
+            <path d="M50 24 C44 24 41 28 43 31 C45 34 49 32 48 29"/>
+            <path d="M50 24 C56 24 59 28 57 31 C55 34 51 32 52 29"/>
+            <path d="M50 76 C44 76 41 72 43 69 C45 66 49 68 48 71"/>
+            <path d="M50 76 C56 76 59 72 57 69 C55 66 51 68 52 71"/>
+            <path d="M27 50 C27 45 29 42 32 42 M73 50 C73 45 71 42 68 42 M27 50 C27 55 29 58 32 58 M73 50 C73 55 71 58 68 58"/>
+          </g>
+          <g fill="none" stroke="#fff6d6" stroke-opacity=".7" stroke-width=".7" stroke-linecap="round" transform="translate(-.6 -.6)">
+            <path d="M50 24 C44 24 41 28 43 31 M50 24 C56 24 59 28 57 31 M50 76 C44 76 41 72 43 69 M50 76 C56 76 59 72 57 69"/>
+          </g>
         </svg>
         <span data-cfg="monogram"></span>
       </div>
@@ -122,43 +182,128 @@
 
 <!-- ============ ΠΡΟΣΚΛΗΤΗΡΙΟ ============ -->
 <main class="card" id="card" aria-hidden="true">
-  <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
 
-  <section class="invite">
-    <p class="eyebrow" data-cfg="intro"></p>
-    <h1 class="names">
-      <span data-cfg="bride"></span>
-      <span class="amp">&amp;</span>
-      <span data-cfg="groom"></span>
-    </h1>
-    <p class="lead" data-cfg="invitationText"></p>
-
-    <div class="when">
-      <span class="when-day" data-cfg="weekday"></span>
-      <span class="when-date" data-cfg="date"></span>
-      <span class="when-time" data-cfg="time"></span>
-    </div>
-
-    <div class="places">
-      <div class="place">
-        <h2>Μυστήριο</h2>
-        <p class="place-name" data-cfg="ceremonyName"></p>
-        <p class="place-addr" data-cfg="ceremonyAddress"></p>
-        <a class="map-link" data-cfg-href="ceremonyMap" target="_blank" rel="noopener">Οδηγίες χάρτη →</a>
+  <!-- ============ 1. HERO ============ -->
+  <section class="hero">
+    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
+    <div class="hero-inner">
+      <p class="eyebrow" data-cfg="intro"></p>
+      <h1 class="names">
+        <span data-cfg="bride"></span>
+        <span class="amp">&amp;</span>
+        <span data-cfg="groom"></span>
+      </h1>
+      <p class="lead" data-cfg="invitationText"></p>
+      <div class="when">
+        <span class="when-day" data-cfg="weekday"></span>
+        <span class="when-date" data-cfg="date"></span>
+        <span class="when-time" data-cfg="time"></span>
       </div>
-      <div class="place">
-        <h2>Δεξίωση</h2>
-        <p class="place-name" data-cfg="receptionName"></p>
-        <p class="place-addr" data-cfg="receptionAddress"></p>
-        <a class="map-link" data-cfg-href="receptionMap" target="_blank" rel="noopener">Οδηγίες χάρτη →</a>
-      </div>
+      <p class="hero-place" data-cfg="placeLine"></p>
     </div>
-
-    <div class="divider"><span></span><i data-cfg="monogram"></i><span></span></div>
+    <a class="scroll-cue" href="#story" aria-label="Συνέχεια προς τα κάτω"><span>Συνέχεια</span><i></i></a>
   </section>
 
-  <!-- ============ RSVP ============ -->
+  <!-- ============ 2. Η ΙΣΤΟΡΙΑ ΜΑΣ ============ -->
+  <section class="sec story" id="story">
+    <header class="sec-head reveal">
+      <p class="kicker">I — II — III</p>
+      <h2 class="sec-title">Η ιστορία μας</h2>
+      <p class="sec-sub" data-cfg="storyIntro"></p>
+    </header>
+    <div class="chapters" id="chapters"></div>
+  </section>
+
+  <!-- ============ 3. ΣΤΙΓΜΕΣ ============ -->
+  <section class="sec moments" id="moments">
+    <header class="sec-head reveal">
+      <h2 class="sec-title">Στιγμές</h2>
+      <p class="sec-sub">Κομμάτια από την ιστορία μας</p>
+    </header>
+    <div class="carousel reveal">
+      <div class="track" id="gallery" tabindex="0" aria-label="Φωτογραφίες"></div>
+      <div class="car-nav">
+        <button type="button" class="car-btn" data-dir="-1" aria-label="Προηγούμενη">←</button>
+        <button type="button" class="car-btn" data-dir="1" aria-label="Επόμενη">→</button>
+      </div>
+    </div>
+    <blockquote class="quote reveal">
+      <p data-cfg="quote"></p>
+      <cite data-cfg="quoteSource"></cite>
+    </blockquote>
+  </section>
+
+  <!-- ============ 4. Η ΜΕΡΑ ΤΟΥ ΓΑΜΟΥ ============ -->
+  <section class="sec day" id="day">
+    <header class="sec-head reveal">
+      <p class="kicker" data-cfg="weekday"></p>
+      <h2 class="sec-title">Η μέρα του γάμου</h2>
+      <p class="big-date" data-cfg="date"></p>
+    </header>
+
+    <div class="venues">
+      <article class="venue reveal">
+        <p class="venue-label">Μυστήριο · <span data-cfg="ceremonyTime"></span></p>
+        <h3 data-cfg="ceremonyName"></h3>
+        <p class="venue-addr" data-cfg="ceremonyAddress"></p>
+      </article>
+      <article class="venue reveal">
+        <p class="venue-label">Δεξίωση · <span data-cfg="receptionTime"></span></p>
+        <h3 data-cfg="receptionName"></h3>
+        <p class="venue-addr" data-cfg="receptionAddress"></p>
+      </article>
+    </div>
+
+    <div class="program reveal">
+      <h3 class="program-title">Το πρόγραμμα της βραδιάς</h3>
+      <ol class="timeline" id="timeline"></ol>
+    </div>
+  </section>
+
+  <!-- ============ 5. COUNTDOWN ============ -->
+  <section class="countdown" id="countdown">
+    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
+    <div class="cd-inner reveal">
+      <h2 class="sec-title">Αντίστροφη μέτρηση</h2>
+      <div class="cd-grid" id="cd-grid" aria-live="off">
+        <div class="cd-cell"><b id="cd-days">—</b><span>Μέρες</span></div>
+        <div class="cd-cell"><b id="cd-hours">—</b><span>Ώρες</span></div>
+        <div class="cd-cell"><b id="cd-mins">—</b><span>Λεπτά</span></div>
+        <div class="cd-cell"><b id="cd-secs">—</b><span>Δευτερόλεπτα</span></div>
+      </div>
+      <p class="cd-done" id="cd-done" hidden>Ήρθε η μεγάλη μέρα!</p>
+      <p class="cd-place" data-cfg="placeLine"></p>
+    </div>
+    <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
+  </section>
+
+  <!-- ============ 6. ΧΑΡΤΗΣ & ΟΔΗΓΙΕΣ ============ -->
+  <section class="sec directions" id="directions">
+    <header class="sec-head reveal">
+      <h2 class="sec-title">Πώς θα έρθετε</h2>
+      <p class="sec-sub">Επιλέξτε χώρο για να δείτε τον χάρτη και πατήστε «Οδηγίες» για πλοήγηση.</p>
+    </header>
+    <div class="map-box reveal">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" class="tab" data-venue="ceremony" aria-selected="true">Μυστήριο</button>
+        <button type="button" role="tab" class="tab" data-venue="reception" aria-selected="false">Δεξίωση</button>
+      </div>
+      <div class="map-frame">
+        <iframe id="map" title="Χάρτης" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+      <div class="map-info">
+        <div>
+          <p class="map-name" id="map-name"></p>
+          <p class="map-addr" id="map-addr"></p>
+        </div>
+        <a class="btn" id="map-dir" target="_blank" rel="noopener">Οδηγίες →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. RSVP ============ -->
   <section class="rsvp" id="rsvp">
+    <div class="divider"><span></span><i data-cfg="monogram"></i><span></span></div>
     <h2 class="rsvp-title">Θα έρθετε;</h2>
     <p class="rsvp-sub">Παρακαλούμε απαντήστε έως <strong data-cfg="rsvpDeadline"></strong></p>
 
@@ -215,7 +360,19 @@
     </div>
   </section>
 
-  <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/></svg></div>
+  <!-- ============ 8. ΕΥΧΑΡΙΣΤΟΥΜΕ ============ -->
+  <section class="sec closing" id="closing">
+    <figure class="photo photo-wide reveal" data-photo="thankyou"></figure>
+    <h2 class="sec-title reveal">Σας ευχαριστούμε</h2>
+    <p class="closing-text reveal" data-cfg="thankYouText"></p>
+    <div class="closing-sign reveal">
+      <span class="mono" data-cfg="monogram"></span>
+      <p><span data-cfg="bride"></span> &amp; <span data-cfg="groom"></span> · <span data-cfg="dateShort"></span></p>
+      <p class="muted" data-cfg="placeLine"></p>
+    </div>
+  </section>
+
+  <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
 </main>
 
 <script>
@@ -230,20 +387,157 @@ const CONFIG = {
   invitationText: "και θα ήταν τιμή μας να είστε κοντά μας σε αυτή την ξεχωριστή μέρα",
   weekday: "Σάββατο",
   date: "12 Ιουνίου 2027",
+  dateShort: "12.06.2027",
   time: "στις 7:00 μ.μ.",
+  // Ακριβής ώρα έναρξης για την αντίστροφη μέτρηση (ώρα Ελλάδας, θερινή = +03:00)
+  countdownTo: "2027-06-12T19:00:00+03:00",
+  placeLine: "Σπάτα · Μαρκόπουλο, Αττική",
+
   ceremonyName: "Εκκλησάκι Αγίων Πέτρου και Παύλου",
   ceremonyAddress: "Σπάτα",
-  ceremonyMap: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Άγιοι Πέτρος και Παύλος Σπάτα"),
+  ceremonyTime: "19:00",
+  ceremonyQuery: "Άγιοι Πέτρος και Παύλος Σπάτα",   // τι ψάχνει ο χάρτης
   receptionName: "Villa Elia",
   receptionAddress: "Μαρκόπουλο",
-  receptionMap: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Villa Elia Μαρκόπουλο"),
+  receptionTime: "20:30",
+  receptionQuery: "Villa Elia Μαρκόπουλο",
+
+  // Πρόγραμμα βραδιάς
+  program: [
+    { time: "19:00", title: "Μυστήριο", note: "Εκκλησάκι Αγίων Πέτρου και Παύλου" },
+    { time: "20:30", title: "Υποδοχή & κοκτέιλ", note: "Villa Elia" },
+    { time: "21:30", title: "Δείπνο", note: "" },
+    { time: "23:00", title: "Πάρτι μέχρι το πρωί", note: "" },
+  ],
+
+  // Η ιστορία μας — αλλάξτε τα κείμενα με τα δικά σας
+  storyIntro: "Τρία κεφάλαια, μία ιστορία.",
+  story: [
+    { year: "2019", title: "Η πρώτη συνάντηση", text: "Γράψτε εδώ πώς γνωριστήκατε…", photo: "story1" },
+    { year: "2022", title: "Μαζί", text: "Γράψτε εδώ μια στιγμή από τη ζωή σας μαζί…", photo: "story2" },
+    { year: "2026", title: "Το «ναι»", text: "Γράψτε εδώ για την πρόταση γάμου…", photo: "story3" },
+  ],
+
+  // Στιγμές (gallery)
+  gallery: [
+    { photo: "g1", caption: "" },
+    { photo: "g2", caption: "" },
+    { photo: "g3", caption: "" },
+    { photo: "g4", caption: "" },
+    { photo: "g5", caption: "" },
+    { photo: "g6", caption: "" },
+  ],
+  quote: "Όπου πας εσύ, θα έρθω κι εγώ.",
+  quoteSource: "Ρουθ 1:16",
+
+  thankYouText: "Για την αγάπη, το γέλιο και όλα όσα σας έφεραν κοντά μας. Ανυπομονούμε να μοιραστούμε αυτή τη βραδιά μαζί σας.",
+
   rsvpDeadline: "1 Μαΐου 2027",
+
+  // Φωτογραφίες: βάλτε τα αρχεία στον φάκελο public/photos/ και γράψτε το path.
+  // Όσες μείνουν κενές εμφανίζονται ως πλαίσιο «Φωτογραφία».
+  photos: {
+    story1: "", story2: "", story3: "",
+    g1: "", g2: "", g3: "", g4: "", g5: "", g6: "",
+    thankyou: "",
+  },
 };
 /* ===================================================================== */
 
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const photoFig = (key, cls = "") => `<figure class="photo ${cls}" data-photo="${esc(key)}"></figure>`;
+
+/* ---------- Ενότητες από το CONFIG ---------- */
+document.getElementById("chapters").innerHTML = CONFIG.story.map((c, i) => `
+  <article class="chapter reveal">
+    ${photoFig(c.photo)}
+    <div class="chapter-text">
+      <p class="chapter-num">${["I", "II", "III", "IV", "V"][i] ?? i + 1} · ${esc(c.year)}</p>
+      <h3>${esc(c.title)}</h3>
+      <p>${esc(c.text)}</p>
+    </div>
+  </article>`).join("");
+
+document.getElementById("gallery").innerHTML = CONFIG.gallery.map((g, i) => `
+  <div class="slide">
+    ${photoFig(g.photo, "photo-tall")}
+    <p class="slide-cap"><span>${String(i + 1).padStart(2, "0")}</span>${esc(g.caption)}</p>
+  </div>`).join("");
+
+document.getElementById("timeline").innerHTML = CONFIG.program.map(p => `
+  <li><time>${esc(p.time)}</time><div><strong>${esc(p.title)}</strong>${p.note ? `<small>${esc(p.note)}</small>` : ""}</div></li>`).join("");
+
 document.querySelectorAll("[data-cfg]").forEach(el => { el.textContent = CONFIG[el.dataset.cfg] ?? ""; });
-document.querySelectorAll("[data-cfg-href]").forEach(el => { el.href = CONFIG[el.dataset.cfgHref] ?? "#"; });
 document.title = `${CONFIG.bride} & ${CONFIG.groom} — Προσκλητήριο`;
+
+/* ---------- Φωτογραφίες ---------- */
+document.querySelectorAll("[data-photo]").forEach(fig => {
+  const src = CONFIG.photos[fig.dataset.photo];
+  if (src) {
+    const img = new Image();
+    img.src = src; img.alt = ""; img.loading = "lazy"; img.decoding = "async";
+    fig.appendChild(img);
+  } else {
+    fig.classList.add("empty");
+    fig.innerHTML = `<span>Φωτογραφία</span>`;
+  }
+});
+
+/* ---------- Carousel ---------- */
+const track = document.getElementById("gallery");
+document.querySelectorAll(".car-btn").forEach(b => b.addEventListener("click", () => {
+  const slide = track.querySelector(".slide");
+  const step = slide ? slide.getBoundingClientRect().width + 16 : 300;
+  track.scrollBy({ left: step * Number(b.dataset.dir), behavior: "smooth" });
+}));
+
+/* ---------- Αντίστροφη μέτρηση ---------- */
+const target = new Date(CONFIG.countdownTo).getTime();
+const cd = { d: document.getElementById("cd-days"), h: document.getElementById("cd-hours"), m: document.getElementById("cd-mins"), s: document.getElementById("cd-secs") };
+const pad = n => String(n).padStart(2, "0");
+let cdTimer;
+function tick() {
+  const diff = target - Date.now();
+  if (!(diff > 0)) {
+    clearInterval(cdTimer);
+    document.getElementById("cd-grid").hidden = true;
+    document.getElementById("cd-done").hidden = false;
+    return;
+  }
+  const s = Math.floor(diff / 1000);
+  cd.d.textContent = Math.floor(s / 86400);
+  cd.h.textContent = pad(Math.floor(s / 3600) % 24);
+  cd.m.textContent = pad(Math.floor(s / 60) % 60);
+  cd.s.textContent = pad(s % 60);
+}
+tick();
+cdTimer = setInterval(tick, 1000);
+
+/* ---------- Χάρτης ---------- */
+const VENUES = {
+  ceremony: { name: CONFIG.ceremonyName, addr: CONFIG.ceremonyAddress, q: CONFIG.ceremonyQuery },
+  reception: { name: CONFIG.receptionName, addr: CONFIG.receptionAddress, q: CONFIG.receptionQuery },
+};
+function showVenue(key) {
+  const v = VENUES[key];
+  document.getElementById("map").src = `https://maps.google.com/maps?q=${encodeURIComponent(v.q)}&z=15&hl=el&output=embed`;
+  document.getElementById("map-name").textContent = v.name;
+  document.getElementById("map-addr").textContent = v.addr;
+  document.getElementById("map-dir").href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(v.q)}`;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.venue === key)));
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => showVenue(t.dataset.venue)));
+showVenue("ceremony");
+
+/* ---------- Εμφάνιση στο scroll ---------- */
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+} else {
+  document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+}
 
 /* ---------- Φάκελος ---------- */
 const envelope = document.getElementById("envelope");
@@ -252,7 +546,7 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let opened = false;
 function burst() {
   const box = document.getElementById("burst");
-  const colors = ["#1d4596", "#5d86d1", "#ffffff", "#c9d6f2", "#2f5fbf", "#e9eef8"];
+  const colors = ["#e8c98f", "#c99a5b", "#ffffff", "#f6e7c8", "#5d86d1", "#b8893f"];
   for (let i = 0; i < 34; i++) {
     const p = document.createElement("i");
     const angle = Math.random() * Math.PI * 2;
@@ -284,6 +578,7 @@ function openEnvelope() {
 }
 if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
   opened = true; envelope.remove(); card.classList.add("shown"); card.removeAttribute("aria-hidden");
+  requestAnimationFrame(() => document.getElementById("rsvp").scrollIntoView());
 }
 envelope.addEventListener("click", openEnvelope);
 envelope.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEnvelope(); } });
