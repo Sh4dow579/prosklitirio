@@ -9,7 +9,7 @@
 <meta property="og:description" content="Σας προσκαλούμε στον γάμο μας — πατήστε για να απαντήσετε">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=GFS+Didot&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -184,7 +184,7 @@
 <main class="card" id="card" aria-hidden="true">
 
   <!-- ============ 1. HERO ============ -->
-  <section class="hero">
+  <section class="hero grain">
     <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
     <div class="hero-inner">
       <p class="eyebrow" data-cfg="intro"></p>
@@ -212,25 +212,6 @@
       <p class="sec-sub" data-cfg="storyIntro"></p>
     </header>
     <div class="chapters" id="chapters"></div>
-  </section>
-
-  <!-- ============ 3. ΣΤΙΓΜΕΣ ============ -->
-  <section class="sec moments" id="moments">
-    <header class="sec-head reveal">
-      <h2 class="sec-title">Στιγμές</h2>
-      <p class="sec-sub">Κομμάτια από την ιστορία μας</p>
-    </header>
-    <div class="carousel reveal">
-      <div class="track" id="gallery" tabindex="0" aria-label="Φωτογραφίες"></div>
-      <div class="car-nav">
-        <button type="button" class="car-btn" data-dir="-1" aria-label="Προηγούμενη">←</button>
-        <button type="button" class="car-btn" data-dir="1" aria-label="Επόμενη">→</button>
-      </div>
-    </div>
-    <blockquote class="quote reveal">
-      <p data-cfg="quote"></p>
-      <cite data-cfg="quoteSource"></cite>
-    </blockquote>
   </section>
 
   <!-- ============ 4. Η ΜΕΡΑ ΤΟΥ ΓΑΜΟΥ ============ -->
@@ -261,7 +242,7 @@
   </section>
 
   <!-- ============ 5. COUNTDOWN ============ -->
-  <section class="countdown" id="countdown">
+  <section class="countdown grain" id="countdown">
     <div class="band"><svg><rect width="100%" height="100%" fill="url(#tiles)"/><rect width="100%" height="100%" fill="#fff" filter="url(#mottle)"/></svg></div>
     <div class="cd-inner reveal">
       <h2 class="sec-title">Αντίστροφη μέτρηση</h2>
@@ -362,11 +343,11 @@
 
   <!-- ============ 8. ΕΥΧΑΡΙΣΤΟΥΜΕ ============ -->
   <section class="sec closing" id="closing">
-    <figure class="photo photo-wide reveal" data-photo="thankyou"></figure>
+    <figure class="photo photo-wide" data-photo="thankyou"></figure>
     <h2 class="sec-title reveal">Σας ευχαριστούμε</h2>
     <p class="closing-text reveal" data-cfg="thankYouText"></p>
     <div class="closing-sign reveal">
-      <span class="mono" data-cfg="monogram"></span>
+      <span class="mono"><svg class="mono-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="1"/><circle cx="50" cy="50" r="44" pathLength="1"/></svg><span class="mono-text" data-cfg="monogram"></span></span>
       <p><span data-cfg="bride"></span> &amp; <span data-cfg="groom"></span> · <span data-cfg="dateShort"></span></p>
       <p class="muted" data-cfg="placeLine"></p>
     </div>
@@ -418,18 +399,6 @@ const CONFIG = {
     { year: "2026", title: "Το «ναι»", text: "Γράψτε εδώ για την πρόταση γάμου…", photo: "story3" },
   ],
 
-  // Στιγμές (gallery)
-  gallery: [
-    { photo: "g1", caption: "" },
-    { photo: "g2", caption: "" },
-    { photo: "g3", caption: "" },
-    { photo: "g4", caption: "" },
-    { photo: "g5", caption: "" },
-    { photo: "g6", caption: "" },
-  ],
-  quote: "Όπου πας εσύ, θα έρθω κι εγώ.",
-  quoteSource: "Ρουθ 1:16",
-
   thankYouText: "Για την αγάπη, το γέλιο και όλα όσα σας έφεραν κοντά μας. Ανυπομονούμε να μοιραστούμε αυτή τη βραδιά μαζί σας.",
 
   rsvpDeadline: "1 Μαΐου 2027",
@@ -438,7 +407,6 @@ const CONFIG = {
   // Όσες μείνουν κενές εμφανίζονται ως πλαίσιο «Φωτογραφία».
   photos: {
     story1: "", story2: "", story3: "",
-    g1: "", g2: "", g3: "", g4: "", g5: "", g6: "",
     thankyou: "",
   },
 };
@@ -449,20 +417,14 @@ const photoFig = (key, cls = "") => `<figure class="photo ${cls}" data-photo="${
 
 /* ---------- Ενότητες από το CONFIG ---------- */
 document.getElementById("chapters").innerHTML = CONFIG.story.map((c, i) => `
-  <article class="chapter reveal">
+  <article class="chapter">
     ${photoFig(c.photo)}
-    <div class="chapter-text">
+    <div class="chapter-text reveal" style="--delay:.15s">
       <p class="chapter-num">${["I", "II", "III", "IV", "V"][i] ?? i + 1} · ${esc(c.year)}</p>
       <h3>${esc(c.title)}</h3>
       <p>${esc(c.text)}</p>
     </div>
   </article>`).join("");
-
-document.getElementById("gallery").innerHTML = CONFIG.gallery.map((g, i) => `
-  <div class="slide">
-    ${photoFig(g.photo, "photo-tall")}
-    <p class="slide-cap"><span>${String(i + 1).padStart(2, "0")}</span>${esc(g.caption)}</p>
-  </div>`).join("");
 
 document.getElementById("timeline").innerHTML = CONFIG.program.map(p => `
   <li><time>${esc(p.time)}</time><div><strong>${esc(p.title)}</strong>${p.note ? `<small>${esc(p.note)}</small>` : ""}</div></li>`).join("");
@@ -483,19 +445,26 @@ document.querySelectorAll("[data-photo]").forEach(fig => {
   }
 });
 
-/* ---------- Carousel ---------- */
-const track = document.getElementById("gallery");
-document.querySelectorAll(".car-btn").forEach(b => b.addEventListener("click", () => {
-  const slide = track.querySelector(".slide");
-  const step = slide ? slide.getBoundingClientRect().width + 16 : 300;
-  track.scrollBy({ left: step * Number(b.dataset.dir), behavior: "smooth" });
-}));
-
 /* ---------- Αντίστροφη μέτρηση ---------- */
 const target = new Date(CONFIG.countdownTo).getTime();
 const cd = { d: document.getElementById("cd-days"), h: document.getElementById("cd-hours"), m: document.getElementById("cd-mins"), s: document.getElementById("cd-secs") };
 const pad = n => String(n).padStart(2, "0");
 let cdTimer;
+// αλλαγή ψηφίου με «κύλισμα»: το παλιό φεύγει πάνω, το νέο έρχεται από κάτω
+function setDigit(el, value) {
+  value = String(value);
+  if (el.dataset.v === value) return;
+  const first = el.dataset.v === undefined;
+  el.dataset.v = value;
+  el.querySelectorAll(".out").forEach(o => o.remove());
+  const old = el.querySelector("span");
+  if (old) { old.className = "out"; setTimeout(() => old.remove(), 700); }
+  else el.textContent = "";
+  const n = document.createElement("span");
+  n.textContent = value;
+  if (!first) n.className = "in";
+  el.appendChild(n);
+}
 function tick() {
   const diff = target - Date.now();
   if (!(diff > 0)) {
@@ -505,10 +474,10 @@ function tick() {
     return;
   }
   const s = Math.floor(diff / 1000);
-  cd.d.textContent = Math.floor(s / 86400);
-  cd.h.textContent = pad(Math.floor(s / 3600) % 24);
-  cd.m.textContent = pad(Math.floor(s / 60) % 60);
-  cd.s.textContent = pad(s % 60);
+  setDigit(cd.d, Math.floor(s / 86400));
+  setDigit(cd.h, pad(Math.floor(s / 3600) % 24));
+  setDigit(cd.m, pad(Math.floor(s / 60) % 60));
+  setDigit(cd.s, pad(s % 60));
 }
 tick();
 cdTimer = setInterval(tick, 1000);
@@ -525,24 +494,50 @@ function showVenue(key) {
   document.getElementById("map-addr").textContent = v.addr;
   document.getElementById("map-dir").href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(v.q)}`;
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.venue === key)));
+  const info = document.querySelector(".map-info");
+  info.classList.remove("swap"); void info.offsetWidth; info.classList.add("swap");
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => showVenue(t.dataset.venue)));
 showVenue("ceremony");
 
-/* ---------- Εμφάνιση στο scroll ---------- */
-if ("IntersectionObserver" in window) {
+/* ---------- Εμφάνιση στο scroll + parallax ---------- */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// ξεκινά μόλις φανεί το προσκλητήριο (όχι πίσω από τον φάκελο)
+function startReveal() {
+  const targets = document.querySelectorAll(".reveal, .photo");
+  if (!("IntersectionObserver" in window)) { targets.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-  }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-} else {
-  document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+  }), { threshold: 0, rootMargin: "0px 0px -12% 0px" });
+  targets.forEach(el => io.observe(el));
+}
+
+const heroInner = document.querySelector(".hero-inner");
+const parallaxImgs = () => document.querySelectorAll(".photo img");
+let ticking = false;
+function onScroll() {
+  ticking = false;
+  const vh = innerHeight;
+  // hero: τα γράμματα κατεβαίνουν λίγο και σβήνουν καθώς κατεβαίνει η σελίδα
+  const p = Math.min(1, Math.max(0, scrollY / vh));
+  heroInner.style.transform = `translateY(${p * 14}%)`;
+  heroInner.style.opacity = String(Math.max(0, 1 - p / 0.7));
+  // φωτογραφίες: η εικόνα κινείται πιο αργά από το πλαίσιο
+  parallaxImgs().forEach(img => {
+    const r = img.parentElement.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > vh) return;
+    const prog = (vh - r.top) / (vh + r.height);   // 0 → 1 όσο περνάει
+    img.style.setProperty("--py", `${(prog * 2 - 1) * 8}%`);
+  });
+}
+if (!reduceMotion) {
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener("resize", onScroll);
 }
 
 /* ---------- Φάκελος ---------- */
 const envelope = document.getElementById("envelope");
 const card = document.getElementById("card");
-const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let opened = false;
 function burst() {
   const box = document.getElementById("burst");
@@ -573,11 +568,13 @@ function openEnvelope() {
     envelope.classList.add("gone");
     card.classList.add("shown");
     card.removeAttribute("aria-hidden");
+    startReveal();
     setTimeout(() => envelope.remove(), t[2]);
   }, t[1]);
 }
 if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
   opened = true; envelope.remove(); card.classList.add("shown"); card.removeAttribute("aria-hidden");
+  startReveal();
   requestAnimationFrame(() => document.getElementById("rsvp").scrollIntoView());
 }
 envelope.addEventListener("click", openEnvelope);

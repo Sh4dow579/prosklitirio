@@ -9,8 +9,13 @@
   --muted: #5d6a8c;
   --line: #d7dcea;
   --silver: #c9ccd3;
-  --serif: "EB Garamond", "GFS Didot", Georgia, serif;
-  --display: "GFS Didot", "EB Garamond", Georgia, serif;
+  --gold: #b8893f;
+  --serif: "Manrope", system-ui, sans-serif;            /* κείμενο */
+  --display: "Noto Serif Display", "Times New Roman", serif; /* τίτλοι */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-cinema: cubic-bezier(.76, 0, .24, 1);
+  --ease-draw: cubic-bezier(.65, 0, .35, 1);
+  --shadow-editorial: 0 40px 80px -40px rgba(20, 38, 79, .45);
 }
 
 * { box-sizing: border-box; }
@@ -23,8 +28,8 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.55;
+  font-size: 16px;
+  line-height: 1.7;
   overflow-x: hidden;
 }
 body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
@@ -171,9 +176,22 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .band { height: 64px; border-block: 1px solid var(--cobalt); }
 .band svg { width: 100%; height: 100%; display: block; }
 
-/* εμφάνιση στο scroll */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
-.reveal.in { opacity: 1; transform: none; }
+/* εμφάνιση στο scroll (fade + άνοδος + ξεθόλωμα) */
+.reveal {
+  opacity: 0; transform: translateY(28px); filter: blur(6px);
+  transition: opacity 1.3s var(--ease-out), transform 1.3s var(--ease-out), filter 1.3s var(--ease-out);
+  transition-delay: var(--delay, 0s);
+}
+.reveal.in { opacity: 1; transform: none; filter: blur(0); }
+
+/* κόκκος χαρτιού */
+.grain { position: relative; }
+.grain::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: .09; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.grain > * { position: relative; z-index: 1; }
 
 /* ---------------- Hero ---------------- */
 .hero {
@@ -184,20 +202,29 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 48px 20px 24px;
 }
-.card.shown .hero-inner > * { animation: rise 1s cubic-bezier(.2,.7,.2,1) both; }
-.card.shown .hero-inner > :nth-child(2) { animation-delay: .15s; }
-.card.shown .hero-inner > :nth-child(3) { animation-delay: .3s; }
-.card.shown .hero-inner > :nth-child(4) { animation-delay: .45s; }
-.card.shown .hero-inner > :nth-child(5) { animation-delay: .6s; }
-@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
-.hero-place { margin: 18px 0 0; font-style: italic; color: var(--muted); }
+.hero-inner { will-change: transform, opacity; }
+/* είσοδος τίτλων: έρχονται από κάτω θολά και καθαρίζουν, κλιμακωτά */
+.hero-inner > * { opacity: 0; transform: translateY(40px); filter: blur(10px); }
+.card.shown .hero-inner > * { animation: heroIn 1.8s var(--ease-out) both; animation-delay: calc(.7s + var(--i, 0) * .18s); }
+.hero-inner > :nth-child(2) { --i: 1; }
+.hero-inner > :nth-child(3) { --i: 2; }
+.hero-inner > :nth-child(4) { --i: 3; }
+.hero-inner > :nth-child(5) { --i: 4; }
+@keyframes heroIn { to { opacity: 1; transform: none; filter: blur(0); } }
+.hero-place { margin: 18px 0 0; color: var(--muted); }
 .scroll-cue {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
   padding-bottom: 28px; color: var(--muted); text-decoration: none;
-  font-size: 12px; letter-spacing: .28em; text-transform: uppercase;
 }
-.scroll-cue i { width: 1px; height: 38px; background: linear-gradient(var(--cobalt), transparent); animation: cue 2.2s ease-in-out infinite; transform-origin: top; }
-@keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+.card.shown .scroll-cue { animation: heroIn 1.4s var(--ease-out) 1.8s both; }
+.scroll-cue { opacity: 0; }
+.scroll-cue i { width: 1px; height: 44px; background: currentColor; animation: scrollCue 2.6s var(--ease-cinema) infinite; }
+@keyframes scrollCue {
+  0%   { transform-origin: top; transform: scaleY(0); }
+  45%  { transform-origin: top; transform: scaleY(1); }
+  55%  { transform-origin: bottom; transform: scaleY(1); }
+  100% { transform-origin: bottom; transform: scaleY(0); }
+}
 
 /* ---------------- Κοινά ενοτήτων ---------------- */
 .sec { padding: 88px 20px; max-width: 1040px; margin: 0 auto; }
@@ -213,8 +240,18 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .sec-sub { margin: 12px 0 0; color: var(--muted); font-style: italic; text-wrap: balance; }
 
 /* ---------------- Φωτογραφίες ---------------- */
-.photo { margin: 0; position: relative; overflow: hidden; border-radius: 3px; aspect-ratio: 4 / 5; background: var(--paper-2); }
-.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo {
+  margin: 0; position: relative; overflow: hidden; border-radius: 2px; aspect-ratio: 4 / 5; background: var(--paper-2);
+  box-shadow: var(--shadow-editorial);
+  /* αποκάλυψη από κάτω προς τα πάνω */
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.6s var(--ease-cinema);
+}
+.photo.in { clip-path: inset(0 0 0 0); }
+.photo img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  transform: translateY(var(--py, 0%)) scale(1.18); will-change: transform;   /* parallax */
+}
 .photo.empty {
   display: grid; place-items: center;
   border: 1px dashed #b9c2da;
@@ -237,29 +274,6 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 }
 .chapter h3 { margin: 0 0 12px; font-style: italic; font-weight: 400; font-size: 32px; line-height: 1.15; color: var(--cobalt); }
 .chapter-text p:last-child { margin: 0; }
-
-/* ---------------- Στιγμές ---------------- */
-.moments { max-width: none; background: var(--paper-2); }
-.carousel { max-width: 1040px; margin: 0 auto; }
-.track {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(72vw, 300px); gap: 16px;
-  overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 12px;
-  scrollbar-width: none; outline: none;
-}
-.track::-webkit-scrollbar { display: none; }
-.slide { scroll-snap-align: start; }
-.slide-cap { margin: 10px 0 0; display: flex; gap: 10px; align-items: baseline; font-style: italic; color: var(--ink); }
-.slide-cap span { font-family: var(--display); font-style: normal; font-size: 13px; letter-spacing: .1em; color: var(--sky); }
-.car-nav { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
-.car-btn {
-  width: 48px; height: 48px; border-radius: 50%;
-  border: 1px solid var(--cobalt); background: transparent; color: var(--cobalt);
-  font: inherit; font-size: 20px; cursor: pointer; transition: background .15s, color .15s;
-}
-.car-btn:hover { background: var(--cobalt); color: #fff; }
-.quote { margin: 64px auto 0; max-width: 520px; text-align: center; }
-.quote p { margin: 0; font-style: italic; font-size: clamp(24px, 4.6vw, 32px); line-height: 1.3; color: var(--cobalt); }
-.quote cite { display: block; margin-top: 10px; font-style: normal; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------------- Η μέρα του γάμου ---------------- */
 .big-date { margin: 14px 0 0; font-family: var(--display); font-size: 26px; color: var(--ink); }
@@ -293,7 +307,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .cd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 620px; margin: 36px auto 0; }
 .cd-cell { display: flex; flex-direction: column; gap: 6px; padding: 18px 4px; border: 1px solid rgba(255,255,255,.18); border-radius: 4px; background: rgba(255,255,255,.04); }
 .cd-cell b { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8vw, 54px); line-height: 1; font-variant-numeric: tabular-nums; }
-.cd-cell span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #b9c6e6; }
+.cd-cell > span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #b9c6e6; }
 .cd-done { margin: 28px 0 0; font-style: italic; font-size: 26px; }
 .cd-place { margin: 28px 0 0; font-style: italic; color: #b9c6e6; }
 
@@ -455,6 +469,80 @@ input[type=text]:focus, textarea:focus {
   border-bottom: 1px solid var(--line); cursor: pointer;
 }
 
+/* =====================================================================
+   Τυπογραφία (Noto Serif Display + Manrope)
+   ===================================================================== */
+/* μεγάλοι τίτλοι: λεπτό serif */
+.names, .sec-title, .rsvp-title, .thanks-title, .chapter h3, .venue h3, .cd-done,
+.big-date, .when-date, .timeline time, .timeline strong, .map-name, .cd-cell b,
+.letter-names, .seal span, .divider i, .closing-sign .mono {
+  font-family: var(--display); font-optical-sizing: auto; font-style: normal;
+}
+.names {
+  font-weight: 200; letter-spacing: -.02em; line-height: .95;
+  font-size: clamp(3rem, 13vw, 6.5rem); color: var(--ink);
+}
+.names .amp { font-style: italic; font-weight: 300; font-size: .42em; color: var(--gold); margin: .25em 0; }
+.sec-title, .rsvp-title {
+  font-weight: 200; letter-spacing: -.02em; line-height: 1;
+  font-size: clamp(2.6rem, 9vw, 4.75rem); color: var(--ink);
+}
+.thanks-title, .cd-done { font-weight: 300; font-style: italic; letter-spacing: -.01em; font-size: clamp(2rem, 6vw, 2.75rem); }
+.chapter h3, .venue h3 { font-weight: 300; letter-spacing: -.01em; line-height: 1.05; font-size: clamp(1.9rem, 4.5vw, 2.6rem); color: var(--ink); }
+.big-date, .when-date { font-weight: 300; font-size: clamp(1.6rem, 4.5vw, 2.2rem); letter-spacing: -.01em; }
+.timeline time { font-weight: 300; font-style: italic; font-size: 1.25rem; color: var(--cobalt); }
+.timeline strong { font-weight: 300; font-size: 1.4rem; line-height: 1.2; }
+.map-name { font-weight: 300; font-size: 1.5rem; }
+.cd-cell b { font-weight: 200; }
+.letter-names { font-weight: 300; }
+.letter-names em { font-style: italic; color: var(--gold); }
+.closing-sign p:first-of-type { font-family: var(--display); font-weight: 300; font-size: 1.35rem; }
+
+/* μικρές επικεφαλίδες: αραιά κεφαλαία Manrope */
+.eyebrow, .kicker, .when-day, .venue-label, .chapter-num, .program-title, .cd-cell > span,
+.field > span, .choice legend, .tab, .scroll-cue span, .letter-date, .photo.empty span {
+  font-family: var(--serif); font-weight: 500; font-style: normal;
+  font-size: .66rem; letter-spacing: .38em; text-transform: uppercase;
+}
+.eyebrow, .when-day, .scroll-cue span { color: var(--muted); }
+.kicker, .venue-label, .chapter-num { color: var(--cobalt); }
+.program-title { color: var(--cobalt); }
+.btn, .submit { font-family: var(--serif); font-weight: 600; font-size: .72rem; letter-spacing: .3em; }
+
+/* πλάγια υπότιτλοι: italic serif */
+.sec-sub, .hero-place, .when-time, .muted, .timeline small, .cd-place, .counter-label small, .env-hint, .lead {
+  font-family: var(--display); font-style: italic; font-weight: 300;
+}
+.lead { font-size: 1.25rem; line-height: 1.5; }
+.sec-sub, .hero-place, .cd-place { font-size: 1.15rem; }
+.closing-text, .chapter-text p:last-child { font-size: 1rem; color: var(--muted); line-height: 1.8; }
+
+/* σκιά «editorial» */
+.venue, .map-box, .rsvp form { box-shadow: var(--shadow-editorial); }
+
+/* χάρτης σε απαλούς τόνους */
+.map-frame iframe { filter: saturate(.55) sepia(.12) contrast(1.02); }
+.map-info.swap { animation: infoIn .9s var(--ease-out); }
+@keyframes infoIn { from { opacity: 0; transform: translateY(16px); } }
+
+/* countdown: τα ψηφία κυλάνε προς τα πάνω */
+.cd-cell b { display: block; position: relative; height: 1.05em; overflow: hidden; }
+.cd-cell b > span { display: block; font-size: inherit; letter-spacing: 0; text-transform: none; color: inherit; }
+.cd-cell b > span.out { position: absolute; inset: 0; animation: digitOut .7s var(--ease-cinema) forwards; }
+.cd-cell b > span.in { animation: digitIn .7s var(--ease-cinema); }
+@keyframes digitIn { from { transform: translateY(100%); opacity: 0; } }
+@keyframes digitOut { to { transform: translateY(-100%); opacity: 0; } }
+
+/* μονόγραμμα που «ζωγραφίζεται» */
+.closing-sign .mono { position: relative; border: 0; box-shadow: none; width: 84px; height: 84px; font-weight: 300; font-size: 1.3rem; }
+.mono-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.mono-ring circle { fill: none; stroke: currentColor; stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.mono-ring circle + circle { stroke-width: .5; opacity: .5; }
+.mono-text { opacity: 0; filter: blur(10px); transition: opacity 1.6s var(--ease-draw) 1.2s, filter 1.6s var(--ease-draw) 1.2s; }
+.closing-sign.in .mono-ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset 2.4s var(--ease-draw) .2s; }
+.closing-sign.in .mono-ring circle + circle { transition-delay: .5s; }
+.closing-sign.in .mono-text { opacity: 1; filter: blur(0); }
+
 @media (max-width: 760px) {
   .chapter { grid-template-columns: 1fr; gap: 20px; }
   .chapter:nth-child(even) .photo { order: 0; }
@@ -462,13 +550,13 @@ input[type=text]:focus, textarea:focus {
   .venues { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
-  body { font-size: 17px; }
+  body { font-size: 15.5px; }
   .sec { padding: 64px 16px; }
   .sec-head { margin-bottom: 36px; }
   .rsvp { padding: 56px 16px 64px; }
   .rsvp form { padding: 22px 16px; }
   .cd-grid { gap: 8px; }
-  .cd-cell span { font-size: 9px; letter-spacing: .12em; }
+  .cd-cell > span { font-size: 9px; letter-spacing: .12em; }
   .map-frame { aspect-ratio: 4 / 3; }
   .map-info .btn { width: 100%; text-align: center; }
   .timeline::before { left: 60px; }
@@ -479,5 +567,7 @@ input[type=text]:focus, textarea:focus {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; }
+  .reveal, .hero-inner > *, .scroll-cue, .mono-text { opacity: 1; transform: none; filter: none; }
+  .photo { clip-path: none; }
+  .mono-ring circle { stroke-dashoffset: 0; }
 }
