@@ -267,10 +267,14 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .scroll-cue i { width: 1px; height: 2.5rem; background: currentColor; opacity: .6; animation: scrollCue 2.6s var(--ease-cinema) infinite; }
 
 @media (min-width: 768px) {
-  .hero-names { grid-template-columns: 1fr auto 1fr; gap: 3rem; margin-top: 3.5rem; }
-  .hn-left .hn { text-align: right; }
-  .hn-right .hn { text-align: left; }
-  .hn { font-size: clamp(4rem, 8.5vw, 10rem); }
+  .hero-inner { max-width: 110rem; padding-bottom: 8rem; }
+  /* ίσες πλαϊνές στήλες ώστε η φωτογραφία να μένει ακριβώς στο κέντρο,
+     όσο μακρύ κι αν είναι το κάθε όνομα */
+  .hero-names { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 3rem; margin-top: 3.5rem; }
+  .hn-wrap { display: flex; }
+  .hn-left { justify-content: flex-end; }
+  .hn-right { justify-content: flex-start; }
+  .hn { white-space: nowrap; font-size: clamp(4rem, 8.5vw, 10rem); }
   .hero-photo { width: 22vw; margin: 0; }
   .hero-date { font-size: 1.5rem; }
 }
