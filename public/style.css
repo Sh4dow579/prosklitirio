@@ -53,31 +53,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 /* εσωτερικό */
 .op-inner { position: absolute; inset: 0; filter: brightness(.3); } /* σκοτεινό μέχρι να ανοίξουν τα φύλλα */
 .op-inner > .op-tex { filter: brightness(.42) saturate(.92); }
-.op-tiles { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--op-gold); opacity: .16; pointer-events: none; }
-.op-arch {
-  position: absolute; top: 30%; height: 40%; width: min(37%, 21rem);
-  border-radius: 999px 999px 0 0;
-  background: linear-gradient(to bottom, #fbf8f1, var(--op-cream));
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--op-gold) 60%, transparent), 0 10px 30px color-mix(in oklab, var(--op-ink) 55%, transparent);
-}
-.op-arch::after { /* εσωτερική χρυσή γραμμή */
-  content: ""; position: absolute; inset: 8%; border: 1px solid color-mix(in oklab, var(--op-gold) 70%, transparent);
-  border-bottom: 0; border-radius: inherit;
-}
-.op-arch-l { right: calc(50% + max(4%, 1.25rem)); }
-.op-arch-r { left: calc(50% + max(4%, 1.25rem)); }
-.op-inner-mono {
-  position: absolute; left: 0; right: 0; top: 44%; margin: 0; text-align: center;
-  font-family: var(--display); font-weight: 300; font-size: clamp(1.6rem, 6vw, 2.6rem); color: var(--op-gold);
-}
-.op-pocket {
-  position: absolute; left: 0; right: 0; top: 62%; bottom: 20%;
-  background: linear-gradient(to bottom, var(--op-cream), #e9e2d1);
-  box-shadow: 0 -8px 26px color-mix(in oklab, var(--op-ink) 45%, transparent);
-  /* εγκοπή για το δάχτυλο στο κέντρο */
-  -webkit-mask-image: radial-gradient(ellipse 16% 5% at 50% 0, transparent 97%, #000 100%);
-          mask-image: radial-gradient(ellipse 16% 5% at 50% 0, transparent 97%, #000 100%);
-}
+.op-defs { position: absolute; }
 
 /* τα δύο φύλλα */
 .op-half { position: absolute; left: 0; right: 0; height: 50%; backface-visibility: hidden; }
@@ -153,9 +129,6 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 .op-prompt span { animation: opPulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
 @keyframes opFadeIn { from { opacity: 0; } }
 @keyframes opPulse { 50% { opacity: .5; } }
-
-/* λευκό για τη μετάβαση */
-.op-white { position: absolute; inset: 0; z-index: 10; background: #fff; opacity: 0; pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .op-seal, .op-prompt, .op-prompt span { animation: none; }

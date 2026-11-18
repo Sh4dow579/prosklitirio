@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS rsvps (
   name        TEXT NOT NULL,
   attending   INTEGER NOT NULL,          -- 1 = έρχεται, 0 = δεν έρχεται
   adults      INTEGER NOT NULL DEFAULT 0,
-  children    INTEGER NOT NULL DEFAULT 0,
+  children    INTEGER NOT NULL DEFAULT 0,  -- σύνολο παιδιών (kids4 + kids8)
+  kids4       INTEGER NOT NULL DEFAULT 0,  -- παιδιά έως 4 ετών
+  kids8       INTEGER NOT NULL DEFAULT 0,  -- παιδιά έως 8 ετών
   message     TEXT,
   created_at  TEXT NOT NULL,
   updated_at  TEXT NOT NULL

@@ -31,17 +31,19 @@ export async function onRequest({ request, env }) {
 
   if (request.method === "GET") {
     const { results } = await env.DB.prepare(
-      `SELECT id, name, attending, adults, children, message, created_at, updated_at
+      `SELECT id, name, attending, adults, children, kids4, kids8, message, created_at, updated_at
        FROM rsvps ORDER BY updated_at DESC`
     ).all();
 
-    const totals = { responses: results.length, yes: 0, no: 0, adults: 0, children: 0, guests: 0 };
+    const totals = { responses: results.length, yes: 0, no: 0, adults: 0, children: 0, kids4: 0, kids8: 0, guests: 0 };
     for (const r of results) {
       r.attending = r.attending === 1;
       if (r.attending) {
         totals.yes++;
         totals.adults += r.adults;
         totals.children += r.children;
+        totals.kids4 += r.kids4;
+        totals.kids8 += r.kids8;
       } else {
         totals.no++;
       }

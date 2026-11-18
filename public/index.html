@@ -17,10 +17,10 @@
 <!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή): κάρτα που ανοίγει σε δύο φύλλα ============ -->
 <div class="envelope-stage" id="envelope" role="dialog" aria-modal="true" aria-label="Άνοιγμα πρόσκλησης">
 
-  <!-- εσωτερικό: φαίνεται όταν ανοίξουν τα φύλλα -->
+  <!-- εσωτερικό: σκούρο, φαίνεται μόνο στη σχισμή όταν ξεκολλάνε τα φύλλα -->
   <div class="op-inner">
     <div class="op-tex"></div>
-    <svg class="op-tiles" aria-hidden="true">
+    <svg class="op-defs" width="0" height="0" aria-hidden="true">
       <defs>
         <pattern id="opTile" width="72" height="72" patternUnits="userSpaceOnUse" viewBox="0 0 80 80">
           <g fill="none" stroke="currentColor" stroke-width=".7">
@@ -36,13 +36,7 @@
           <g fill="currentColor"><circle cx="40" cy="40" r="3.4"/><circle r="4"/><circle cx="80" r="4"/><circle cy="80" r="4"/><circle cx="80" cy="80" r="4"/></g>
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#opTile)"/>
     </svg>
-    <!-- θήκη με καμάρες -->
-    <div class="op-arch op-arch-l"></div>
-    <div class="op-arch op-arch-r"></div>
-    <p class="op-inner-mono" data-cfg="monogram"></p>
-    <div class="op-pocket"></div>
   </div>
 
   <!-- κάτω φύλλο -->
@@ -72,7 +66,6 @@
   </div>
 
   <p class="op-prompt"><span>Πατήστε για είσοδο</span></p>
-  <div class="op-white" aria-hidden="true"></div>
 </div>
 
 <!-- ============ ΠΡΟΣΚΛΗΤΗΡΙΟ ============ -->
@@ -255,12 +248,23 @@
         <div class="counter">
           <div class="counter-label">
             <span>Παιδιά</span>
-            <small>έως 12 ετών</small>
+            <small>έως 4 ετών</small>
           </div>
           <div class="stepper">
-            <button type="button" data-step="children" data-d="-1" aria-label="Λιγότερα παιδιά">−</button>
-            <output id="children">0</output>
-            <button type="button" data-step="children" data-d="1" aria-label="Περισσότερα παιδιά">+</button>
+            <button type="button" data-step="kids4" data-d="-1" aria-label="Λιγότερα παιδιά έως 4 ετών">−</button>
+            <output id="kids4">0</output>
+            <button type="button" data-step="kids4" data-d="1" aria-label="Περισσότερα παιδιά έως 4 ετών">+</button>
+          </div>
+        </div>
+        <div class="counter">
+          <div class="counter-label">
+            <span>Παιδιά</span>
+            <small>έως 8 ετών</small>
+          </div>
+          <div class="stepper">
+            <button type="button" data-step="kids8" data-d="-1" aria-label="Λιγότερα παιδιά έως 8 ετών">−</button>
+            <output id="kids8">0</output>
+            <button type="button" data-step="kids8" data-d="1" aria-label="Περισσότερα παιδιά έως 8 ετών">+</button>
           </div>
         </div>
       </div>
@@ -534,26 +538,19 @@ async function openEnvelope() {
     play(bottom, [{ transform: "rotateX(10deg)" }, { transform: "rotateX(70deg)" }], { duration: 850, easing: OPEN });
     play($(".op-half-t .op-dim"), [{ opacity: 0 }, { opacity: .45 }], { duration: 850, easing: OPEN });
     play($(".op-half-b .op-dim"), [{ opacity: 0 }, { opacity: .55 }], { duration: 850, easing: OPEN });
-    play($(".op-inner"), [{ transform: "scale(1.06)", filter: "brightness(.3)" }, { transform: "scale(1)", filter: "brightness(.85)" }], { duration: 1300, easing: EASE_OUT });
-    // 4. …και μαζί με το άνοιγμα η εικόνα σβήνει κατευθείαν σε λευκό
-    await play($(".op-white"), [{ opacity: 0 }, { opacity: 1 }], { duration: 650, delay: 100, easing: "ease-in" });
-  } else {
-    await play($(".op-white"), [{ opacity: 0 }, { opacity: 1 }], { duration: 250 });
+    document.querySelector(".hero").animate(
+      [{ filter: "blur(12px)" }, { filter: "blur(0)" }],
+      { duration: 1600, easing: "cubic-bezier(.25,.1,.25,1)" }
+    );
   }
 
-  // 5. από το λευκό, το προσκλητήριο εμφανίζεται σαν να καθαρίζει η ομίχλη
+  // 4. …και μαζί με το άνοιγμα ο φάκελος σβήνει κατευθείαν στο προσκλητήριο
   scrollTo(0, 0);
   showCard();
   envelope.classList.add("gone");
-  if (!reduceMotion) {
-    document.querySelector(".hero").animate(
-      [{ filter: "blur(14px) brightness(1.08)" }, { filter: "blur(0) brightness(1)" }],
-      { duration: 1900, easing: "cubic-bezier(.25,.1,.25,1)" }
-    );
-  }
   envelope.animate(
-    [{ opacity: 1 }, { opacity: .55, offset: .35 }, { opacity: 0 }],
-    { duration: reduceMotion ? 400 : 1700, easing: "ease-out", fill: "forwards" }
+    [{ opacity: 1 }, { opacity: 0 }],
+    { duration: reduceMotion ? 400 : 1100, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
   ).finished.then(() => envelope.remove());
 }
 if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
@@ -569,14 +566,14 @@ const countsEl = document.getElementById("counts");
 const errorEl = document.getElementById("form-error");
 const submitBtn = document.getElementById("submit-btn");
 const thanks = document.getElementById("thanks");
-const counts = { adults: 1, children: 0 };
-const LIMITS = { adults: [1, 20], children: [0, 20] };
+const counts = { adults: 1, kids4: 0, kids8: 0 };
+const LIMITS = { adults: [1, 20], kids4: [0, 20], kids8: [0, 20] };
 
 function loadSaved() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch { return null; } }
 function save(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch {} }
 
 function renderCounts() {
-  for (const k of ["adults", "children"]) {
+  for (const k of Object.keys(counts)) {
     document.getElementById(k).textContent = counts[k];
     document.querySelector(`[data-step="${k}"][data-d="-1"]`).disabled = counts[k] <= LIMITS[k][0];
     document.querySelector(`[data-step="${k}"][data-d="1"]`).disabled = counts[k] >= LIMITS[k][1];
@@ -592,11 +589,12 @@ function attendingValue() { return form.querySelector("input[name=attending]:che
 function syncAttending() { countsEl.classList.toggle("hidden", !attendingValue()); }
 form.querySelectorAll("input[name=attending]").forEach(r => r.addEventListener("change", syncAttending));
 
+const kidsText = (n, age) => n ? `, ${n} ${n === 1 ? "παιδί" : "παιδιά"}${age ? " " + age : ""}` : "";
 function showThanks(r) {
   const total = r.adults + r.children;
   document.getElementById("thanks-title").textContent = r.attending ? "Σας ευχαριστούμε!" : "Θα μας λείψετε!";
   document.getElementById("thanks-text").textContent = r.attending
-    ? `Λάβαμε την απάντησή σας: ${total} ${total === 1 ? "άτομο" : "άτομα"} (${r.adults} ${r.adults === 1 ? "ενήλικας" : "ενήλικες"}${r.children ? `, ${r.children} ${r.children === 1 ? "παιδί" : "παιδιά"}` : ""}). Ανυπομονούμε να σας δούμε!`
+    ? `Λάβαμε την απάντησή σας: ${total} ${total === 1 ? "άτομο" : "άτομα"} (${r.adults} ${r.adults === 1 ? "ενήλικας" : "ενήλικες"}${"kids4" in r ? kidsText(r.kids4, "έως 4 ετών") + kidsText(r.kids8, "έως 8 ετών") : kidsText(r.children)}). Ανυπομονούμε να σας δούμε!`
     : "Λάβαμε την απάντησή σας. Σας ευχαριστούμε που μας ενημερώσατε.";
   form.hidden = true;
   thanks.hidden = false;
@@ -607,7 +605,8 @@ function fillForm(r) {
   document.getElementById("f-message").value = r.message || "";
   form.querySelector(`input[name=attending][value=${r.attending ? "yes" : "no"}]`).checked = true;
   counts.adults = Math.max(1, r.adults || 1);
-  counts.children = r.children || 0;
+  counts.kids4 = r.kids4 || 0;
+  counts.kids8 = r.kids8 ?? r.children ?? 0; // παλιές απαντήσεις είχαν μόνο σύνολο παιδιών
   renderCounts();
   syncAttending();
 }
@@ -634,7 +633,9 @@ form.addEventListener("submit", async e => {
     name,
     attending,
     adults: attending ? counts.adults : 0,
-    children: attending ? counts.children : 0,
+    kids4: attending ? counts.kids4 : 0,
+    kids8: attending ? counts.kids8 : 0,
+    children: attending ? counts.kids4 + counts.kids8 : 0,
     message: document.getElementById("f-message").value.trim(),
   };
   submitBtn.disabled = true;

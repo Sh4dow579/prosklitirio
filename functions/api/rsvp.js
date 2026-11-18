@@ -23,7 +23,10 @@ export async function onRequestPost({ request, env }) {
 
   const attending = body.attending === true;
   const adults = attending ? toInt(body.adults, 1, 20) : 0;
-  const children = attending ? toInt(body.children, 0, 20) : 0;
+  // παιδιά σε δύο ηλικίες· το children κρατά το σύνολο
+  const kids4 = attending ? toInt(body.kids4, 0, 20) : 0;
+  const kids8 = attending ? toInt(body.kids8, 0, 20) : 0;
+  const children = kids4 + kids8;
   const message = String(body.message ?? "").trim().slice(0, 1000);
   const now = new Date().toISOString();
 
@@ -31,18 +34,19 @@ export async function onRequestPost({ request, env }) {
   const id = typeof body.id === "string" && /^[0-9a-f-]{36}$/i.test(body.id) ? body.id : null;
   if (id) {
     const { meta } = await env.DB.prepare(
-      `UPDATE rsvps SET name = ?1, attending = ?2, adults = ?3, children = ?4, message = ?5, updated_at = ?6
+      `UPDATE rsvps SET name = ?1, attending = ?2, adults = ?3, children = ?4, message = ?5, updated_at = ?6,
+       kids4 = ?8, kids8 = ?9
        WHERE id = ?7`
-    ).bind(name, attending ? 1 : 0, adults, children, message, now, id).run();
+    ).bind(name, attending ? 1 : 0, adults, children, message, now, id, kids4, kids8).run();
     if (meta.changes > 0) return json({ id, updated: true });
     // αν διαγράφηκε από τον admin, δημιουργείται ξανά παρακάτω
   }
 
   const newId = crypto.randomUUID();
   await env.DB.prepare(
-    `INSERT INTO rsvps (id, name, attending, adults, children, message, created_at, updated_at)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)`
-  ).bind(newId, name, attending ? 1 : 0, adults, children, message, now).run();
+    `INSERT INTO rsvps (id, name, attending, adults, children, kids4, kids8, message, created_at, updated_at)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?8, ?9, ?6, ?7, ?7)`
+  ).bind(newId, name, attending ? 1 : 0, adults, children, message, now, kids4, kids8).run();
 
   return json({ id: newId, updated: false }, 201);
 }

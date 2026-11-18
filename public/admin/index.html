@@ -132,7 +132,7 @@
   <section class="stats">
     <div class="stat hero"><div class="label">Σύνολο ατόμων</div><div class="value" id="s-guests">0</div><div class="sub">που θα έρθουν</div></div>
     <div class="stat"><div class="label">Ενήλικες</div><div class="value" id="s-adults">0</div></div>
-    <div class="stat"><div class="label">Παιδιά</div><div class="value" id="s-children">0</div></div>
+    <div class="stat"><div class="label">Παιδιά</div><div class="value" id="s-children">0</div><div class="sub" id="s-kids"></div></div>
     <div class="stat"><div class="label">Απαντήσεις</div><div class="value" id="s-responses">0</div><div class="sub" id="s-split"></div></div>
   </section>
 
@@ -148,7 +148,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Όνομα</th><th>Απάντηση</th><th class="num">Ενήλ.</th><th class="num">Παιδιά</th><th>Μήνυμα</th><th>Ημερομηνία</th><th></th></tr>
+        <tr><th>Όνομα</th><th>Απάντηση</th><th class="num">Ενήλ.</th><th class="num">≤4</th><th class="num">≤8</th><th>Μήνυμα</th><th>Ημερομηνία</th><th></th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -199,6 +199,7 @@ function render() {
   $("s-guests").textContent = t.guests;
   $("s-adults").textContent = t.adults;
   $("s-children").textContent = t.children;
+  $("s-kids").textContent = `${t.kids4} έως 4 · ${t.children - t.kids4} έως 8 ετών`;
   $("s-responses").textContent = t.responses;
   $("s-split").textContent = `${t.yes} έρχονται · ${t.no} όχι`;
 
@@ -214,12 +215,13 @@ function render() {
       <td class="name">${esc(r.name)}</td>
       <td><span class="badge ${r.attending ? "yes" : "no"}">${r.attending ? "Έρχεται" : "Δεν έρχεται"}</span></td>
       <td class="num" data-label="Ενήλικες">${r.adults}</td>
-      <td class="num" data-label="Παιδιά">${r.children}</td>
+      <td class="num" data-label="Παιδιά ≤4">${r.kids4}</td>
+      <td class="num" data-label="Παιδιά ≤8">${r.children - r.kids4}</td>
       <td class="msg">${esc(r.message)}</td>
       <td class="date">${fmtDate(r.updated_at)}</td>
       <td class="act"><button class="del" data-id="${esc(r.id)}" data-name="${esc(r.name)}" title="Διαγραφή">✕</button></td>
     </tr>`).join("")
-    : `<tr><td colspan="7" class="empty">${data.rsvps.length ? "Κανένα αποτέλεσμα." : "Δεν έχει απαντήσει κανείς ακόμα."}</td></tr>`;
+    : `<tr><td colspan="8" class="empty">${data.rsvps.length ? "Κανένα αποτέλεσμα." : "Δεν έχει απαντήσει κανείς ακόμα."}</td></tr>`;
 }
 
 $("login").addEventListener("submit", e => {
@@ -245,12 +247,12 @@ $("rows").addEventListener("click", async e => {
 });
 $("export").addEventListener("click", () => {
   const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const lines = [["Όνομα", "Απάντηση", "Ενήλικες", "Παιδιά", "Μήνυμα", "Ημερομηνία"].map(cell).join(";")];
+  const lines = [["Όνομα", "Απάντηση", "Ενήλικες", "Παιδιά έως 4", "Παιδιά έως 8", "Μήνυμα", "Ημερομηνία"].map(cell).join(";")];
   for (const r of data.rsvps) {
-    lines.push([r.name, r.attending ? "Έρχεται" : "Δεν έρχεται", r.adults, r.children, r.message, fmtDate(r.updated_at)].map(cell).join(";"));
+    lines.push([r.name, r.attending ? "Έρχεται" : "Δεν έρχεται", r.adults, r.kids4, r.children - r.kids4, r.message, fmtDate(r.updated_at)].map(cell).join(";"));
   }
   const t = data.totals;
-  lines.push("", [cell("ΣΥΝΟΛΟ"), cell(`${t.yes} έρχονται`), t.adults, t.children, cell(`${t.guests} άτομα`)].join(";"));
+  lines.push("", [cell("ΣΥΝΟΛΟ"), cell(`${t.yes} έρχονται`), t.adults, t.kids4, t.children - t.kids4, cell(`${t.guests} άτομα`)].join(";"));
   const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "apantiseis-gamou.csv" });
   a.click(); URL.revokeObjectURL(a.href);
