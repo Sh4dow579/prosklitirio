@@ -257,6 +257,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 }
 .photo-tall { aspect-ratio: 3 / 4; }
 .photo-wide { aspect-ratio: 16 / 9; }
+.photo-portrait { aspect-ratio: 4 / 5; max-width: 480px; margin-inline: auto; }
 
 /* ---------------- Η ιστορία μας ---------------- */
 .chapters { display: flex; flex-direction: column; gap: 72px; }
