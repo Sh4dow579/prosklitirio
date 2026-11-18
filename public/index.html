@@ -14,12 +14,12 @@
 </head>
 <body>
 
-<!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή) ============ -->
+<!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή): κάρτα που ανοίγει σε δύο φύλλα ============ -->
 <div class="envelope-stage" id="envelope" role="dialog" aria-modal="true" aria-label="Άνοιγμα πρόσκλησης">
 
-  <!-- εσωτερικό φακέλου: σκούρο χαρτί με χρυσό πλακάκι -->
-  <div class="op-layer">
-    <div class="op-piece op-inside"><div class="op-tex"></div><div class="op-shade"></div></div>
+  <!-- εσωτερικό: φαίνεται όταν ανοίξουν τα φύλλα -->
+  <div class="op-inner">
+    <div class="op-tex"></div>
     <svg class="op-tiles" aria-hidden="true">
       <defs>
         <pattern id="opTile" width="72" height="72" patternUnits="userSpaceOnUse" viewBox="0 0 80 80">
@@ -38,32 +38,41 @@
       </defs>
       <rect width="100%" height="100%" fill="url(#opTile)"/>
     </svg>
+    <!-- θήκη με καμάρες -->
+    <div class="op-arch op-arch-l"></div>
+    <div class="op-arch op-arch-r"></div>
+    <p class="op-inner-mono" data-cfg="monogram"></p>
+    <div class="op-pocket"></div>
   </div>
 
-  <!-- πλαϊνά και κάτω φύλλο (τσέπη) -->
-  <div class="op-layer op-folds">
-    <div class="op-fold"><div class="op-piece op-left"><div class="op-tex"></div><div class="op-shade"></div></div></div>
-    <div class="op-fold"><div class="op-piece op-right"><div class="op-tex"></div><div class="op-shade"></div></div></div>
-    <div class="op-fold"><div class="op-piece op-bottom"><div class="op-tex"></div><div class="op-shade"></div></div></div>
+  <!-- κάτω φύλλο -->
+  <div class="op-half op-half-b">
+    <div class="op-clip">
+      <div class="op-tex"></div>
+      <svg class="op-deco" aria-hidden="true"><rect width="100%" height="100%" fill="url(#opTile)"/></svg>
+      <div class="op-frame"></div>
+      <div class="op-dim"></div>
+    </div>
   </div>
 
-  <!-- καπάκι -->
-  <div class="op-fold op-flap">
-    <div class="op-piece op-top"><div class="op-tex"></div><div class="op-shade"></div></div>
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,0 50,50 100,0" fill="none" vector-effect="non-scaling-stroke"/></svg>
+  <!-- πάνω φύλλο, με τη σφραγίδα κολλημένη στην άκρη του -->
+  <div class="op-half op-half-t">
+    <div class="op-clip">
+      <div class="op-tex"></div>
+      <svg class="op-deco" aria-hidden="true"><rect width="100%" height="100%" fill="url(#opTile)"/></svg>
+      <div class="op-frame"></div>
+      <div class="op-dim"></div>
+    </div>
+    <button type="button" class="op-seal" aria-label="Πατήστε για είσοδο">
+      <span class="op-seal-inner">
+        <img src="/envelope/seal.webp" alt="" width="640" height="652" draggable="false">
+        <span class="op-mono"><span data-cfg="monogram"></span></span>
+      </span>
+    </button>
   </div>
-
-  <div class="op-vignette" aria-hidden="true"></div>
-
-  <!-- χρυσή σφραγίδα: σπάει στα δύο -->
-  <button type="button" class="op-seal" aria-label="Πατήστε για είσοδο">
-    <span class="op-seal-inner">
-      <span class="op-half" data-half="l"><img src="/envelope/seal.webp" alt="" width="640" height="652" draggable="false"><span class="op-mono"><span data-cfg="monogram"></span></span></span>
-      <span class="op-half" data-half="r"><img src="/envelope/seal.webp" alt="" width="640" height="652" draggable="false"><span class="op-mono"><span data-cfg="monogram"></span></span></span>
-    </span>
-  </button>
 
   <p class="op-prompt"><span>Πατήστε για είσοδο</span></p>
+  <div class="op-white" aria-hidden="true"></div>
 </div>
 
 <!-- ============ ΠΡΟΣΚΛΗΤΗΡΙΟ ============ -->
@@ -502,36 +511,51 @@ async function openEnvelope() {
   envelope.querySelector(".op-seal").disabled = true;
   if (navigator.vibrate) try { navigator.vibrate(15); } catch {}
 
+  const $ = s => envelope.querySelector(s);
   if (!reduceMotion) {
-    const $ = s => envelope.querySelector(s);
-    const flap = $(".op-flap");
+    const top = $(".op-half-t"), bottom = $(".op-half-b");
+    const OPEN = "cubic-bezier(.55,0,.25,1)";
     // 1. το κείμενο σβήνει, η σφραγίδα «πιέζεται»
     await Promise.all([
-      play($(".op-prompt"), [{ opacity: 0 }], { duration: 400, easing: EASE_OUT }),
+      play($(".op-prompt"), [{ opacity: 0 }], { duration: 300, easing: EASE_OUT }),
       play($(".op-seal-inner"), [
         { transform: "scale(1)", easing: EASE_OUT },
-        { transform: "scale(.92)", easing: EASE_OUT },
-        { transform: "scale(1.03)" }
-      ], { duration: 400 }),
+        { transform: "scale(.94)", easing: EASE_OUT },
+        { transform: "scale(1)" }
+      ], { duration: 350 }),
     ]);
-    // 2. η σφραγίδα σπάει στα δύο και πέφτει
+    // 2. τα δύο φύλλα ξεκολλάνε: ανοίγει μια σκούρα σχισμή στην ένωση
     await Promise.all([
-      play($('[data-half="l"]'), [{ transform: "translate(-30px, 80px) rotate(-22deg)", opacity: 0 }], { duration: 750, easing: EASE_IN }),
-      play($('[data-half="r"]'), [{ transform: "translate(30px, 92px) rotate(18deg)", opacity: 0 }], { duration: 750, easing: EASE_IN }),
+      play(top, [{ transform: "rotateX(0deg)" }, { transform: "rotateX(-12deg)" }], { duration: 800, easing: EASE_OUT }),
+      play(bottom, [{ transform: "rotateX(0deg)" }, { transform: "rotateX(10deg)" }], { duration: 800, easing: EASE_OUT }),
     ]);
-    // 3. το καπάκι ανοίγει: μέχρι τις 90° μπροστά, μετά πίσω από τα φύλλα
-    await play(flap, [{ transform: "rotateX(0deg)" }, { transform: "rotateX(90deg)" }], { duration: 700, easing: EASE_IN });
-    flap.style.zIndex = "5";
-    play(flap, [{ transform: "rotateX(90deg)" }, { transform: "rotateX(178deg)" }], { duration: 700, easing: EASE_OUT });
+    // 3. τα φύλλα γέρνουν προς τα πίσω (το πάνω με τη σφραγίδα), φαίνεται η θήκη, όλα σκουραίνουν λίγο
+    await Promise.all([
+      play(top, [{ transform: "rotateX(-12deg)" }, { transform: "rotateX(-68deg)" }], { duration: 850, easing: OPEN }),
+      play(bottom, [{ transform: "rotateX(10deg)" }, { transform: "rotateX(70deg)" }], { duration: 850, easing: OPEN }),
+      play($(".op-half-t .op-dim"), [{ opacity: 0 }, { opacity: .45 }], { duration: 850, easing: OPEN }),
+      play($(".op-half-b .op-dim"), [{ opacity: 0 }, { opacity: .55 }], { duration: 850, easing: OPEN }),
+      play($(".op-inner"), [{ transform: "scale(1.06)", filter: "brightness(.3)" }, { transform: "scale(1)", filter: "brightness(.85)" }], { duration: 1300, easing: EASE_OUT }),
+    ]);
+    // 4. μικρή παύση στην ανοιχτή κάρτα, μετά σβήνει σε λευκό
+    await play($(".op-white"), [{ opacity: 0 }, { opacity: 1 }], { duration: 550, delay: 450, easing: "ease-in" });
+  } else {
+    await play($(".op-white"), [{ opacity: 0 }, { opacity: 1 }], { duration: 250 });
   }
 
-  // 4. ο φάκελος σβήνει (fade + ελαφρύ zoom) και αποκαλύπτει το προσκλητήριο
+  // 5. από το λευκό, το προσκλητήριο εμφανίζεται σαν να καθαρίζει η ομίχλη
   scrollTo(0, 0);
   showCard();
   envelope.classList.add("gone");
+  if (!reduceMotion) {
+    document.querySelector(".hero").animate(
+      [{ filter: "blur(14px) brightness(1.08)" }, { filter: "blur(0) brightness(1)" }],
+      { duration: 1900, easing: "cubic-bezier(.25,.1,.25,1)" }
+    );
+  }
   envelope.animate(
-    [{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(1.04)" }],
-    { duration: reduceMotion ? 400 : 1600, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" }
+    [{ opacity: 1 }, { opacity: .55, offset: .35 }, { opacity: 0 }],
+    { duration: reduceMotion ? 400 : 1700, easing: "ease-out", fill: "forwards" }
   ).finished.then(() => envelope.remove());
 }
 if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
