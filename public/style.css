@@ -34,136 +34,132 @@ body {
 }
 body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 
-/* ---------------- Φάκελος ---------------- */
+/* ---------------- Φάκελος (Lovable) ---------------- */
 .envelope-stage {
-  position: fixed; inset: 0; z-index: 10; overflow: hidden;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
-  background: #f8f9fb url("/marble.webp") center / cover no-repeat;
-  cursor: pointer; outline: none;
-  transition: opacity .9s ease;
+  --op-ink: oklch(19% .045 263);
+  --op-ink-fg: oklch(95.5% .016 84);
+  --op-gold: oklch(76% .09 78);
+  --op-deep: oklch(27% .09 263);
+  --op-fold: 50%;                         /* πού φτάνει η μύτη του καπακιού */
+  --op-seal: clamp(7.5rem, 26vw, 11rem);  /* μέγεθος σφραγίδας */
+  position: fixed; inset: 0; z-index: 60; overflow: hidden;
+  background: var(--op-deep);
+  perspective: 1800px;
+  cursor: pointer;
 }
-.envelope-stage::after { /* απαλό φως από πάνω */
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(90% 70% at 50% 35%, rgba(255,255,255,.55), transparent 70%),
-              radial-gradient(140% 100% at 50% 50%, transparent 60%, rgba(60,60,70,.12));
-}
-.env-float, .env-hint { position: relative; z-index: 1; }
-.envelope-stage.gone { opacity: 0; pointer-events: none; }
+.envelope-stage.gone { pointer-events: none; }
+.op-layer { position: absolute; inset: 0; }
+.op-folds { z-index: 20; pointer-events: none; }
 
-.env-float { animation: float 5s ease-in-out infinite; }
-@keyframes float { 50% { transform: translateY(-8px) rotate(-.5deg); } }
-
-.envelope {
-  position: relative;
-  width: min(86vw, 460px);
-  aspect-ratio: 7 / 5;
-  perspective: 1400px; transform-style: preserve-3d;
-  transition: transform 1.1s cubic-bezier(.3,.1,.2,1) 1.05s;
+/* κομμάτι χαρτιού: υφή + σκίαση, κομμένο σε σχήμα */
+.op-piece, .op-tex, .op-shade, .op-fold { position: absolute; inset: 0; }
+.op-tex {
+  background: url("/envelope/paper.webp") center / cover;
+  filter: brightness(var(--b, 1)) saturate(.92);
 }
-.envelope::after {
-  content: ""; position: absolute; z-index: -1;
-  left: 8%; right: 8%; bottom: -34px; height: 34px;
-  background: radial-gradient(closest-side, rgba(20,25,45,.35), transparent);
-  transform: translateZ(-2px);
+.op-fold {
+  filter: drop-shadow(0 1px 1.5px color-mix(in oklab, var(--op-ink) 55%, transparent))
+          drop-shadow(0 8px 22px color-mix(in oklab, var(--op-ink) 38%, transparent));
 }
 
-.env-back {
-  position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: 3px;
-  box-shadow: 0 26px 50px rgba(20,28,55,.35), 0 3px 8px rgba(20,28,55,.25);
-  transform: translateZ(0);
+.op-inside { --b: .42; }
+.op-inside .op-shade {
+  background: linear-gradient(to bottom, color-mix(in oklab, var(--op-ink) 55%, transparent), color-mix(in oklab, var(--op-ink) 15%, transparent) 60%);
 }
-.env-back svg, .letter-band svg, .flap-face svg { width: 100%; height: 100%; display: block; }
+.op-tiles { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--op-gold); opacity: .16; pointer-events: none; }
 
-.letter {
-  position: absolute; z-index: 2; left: 6%; right: 6%; top: 5%; height: 88%;
-  background: #fffdf8; border-radius: 2px; overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,.18);
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  transform: translateZ(1px);
-  transition: transform 1.1s cubic-bezier(.3,.1,.2,1) 1.05s;
+.op-left { --b: .8; clip-path: polygon(0 0, 52% 50%, 0 100%); }
+.op-left .op-tex { background-position: left center; }
+.op-left .op-shade {
+  background: linear-gradient(100deg, color-mix(in oklab, var(--op-ink) 28%, transparent) 0%, transparent 35%,
+              color-mix(in oklab, var(--op-ink-fg) 5%, transparent) 52%, color-mix(in oklab, var(--op-ink) 10%, transparent) 100%);
 }
-.letter-band { width: 100%; height: 17%; border-bottom: 1px solid var(--cobalt); }
-.letter-names {
-  margin: 8% 0 0; font-style: italic; color: var(--cobalt);
-  font-size: clamp(22px, 6.4vw, 34px); line-height: 1.1;
+.op-right { --b: .74; clip-path: polygon(100% 0, 48% 50%, 100% 100%); }
+.op-right .op-tex { background-position: right center; }
+.op-right .op-shade {
+  background: linear-gradient(260deg, color-mix(in oklab, var(--op-ink) 34%, transparent) 0%, transparent 38%,
+              color-mix(in oklab, var(--op-ink) 8%, transparent) 100%);
 }
-.letter-names em { color: var(--sky); font-size: .7em; }
-.letter-date { margin: 6px 0 0; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.op-bottom { --b: .7; clip-path: polygon(0 100%, 50% 46%, 100% 100%); }
+.op-bottom .op-tex { background-position: center bottom; }
+.op-bottom .op-shade {
+  background: linear-gradient(to top, color-mix(in oklab, var(--op-ink) 38%, transparent) 0%, transparent 45%),
+              linear-gradient(to bottom, color-mix(in oklab, var(--op-ink-fg) 7%, transparent), transparent 30%);
+}
 
-.env-front { position: absolute; inset: 0; z-index: 3; transform: translateZ(2px); width: 100%; height: 100%; display: block; pointer-events: none; }
-
-.flap-shadow { position: absolute; z-index: 4; left: 0; top: 0; width: 100%; height: 60%; pointer-events: none; transition: opacity .3s ease .3s; transform: translateZ(2.4px); }
-.env-flap {
-  position: absolute; z-index: 5; left: 0; right: 0; top: 0; height: 60%;
-  transform-origin: top center; transform-style: preserve-3d;
-  transform: translateZ(3px) rotateX(0deg);
-  transition: transform .9s cubic-bezier(.55,.05,.3,1) .3s, z-index 0s .75s;
+.op-flap { z-index: 30; pointer-events: none; transform-origin: top; transform-style: preserve-3d; }
+.op-top { --b: .9; clip-path: polygon(0 0, 100% 0, 50% var(--op-fold)); }
+.op-top .op-tex { background-position: center top; transform: scaleY(-1); }
+.op-top .op-shade {
+  background: radial-gradient(120% 90% at 18% 0%, color-mix(in oklab, var(--op-ink-fg) 12%, transparent), transparent 55%),
+              linear-gradient(to bottom, transparent 40%, color-mix(in oklab, var(--op-ink) 22%, transparent) 100%);
 }
-.flap-face {
-  position: absolute; inset: 0;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-/* η εσωτερική πλευρά γυρίζει ανάποδα, οπότε κόβεται με το τρίγωνο αντεστραμμένο
-   ώστε όταν ανοίξει το καπάκι η μύτη να δείχνει προς τα πάνω */
-.flap-in { transform: rotateX(180deg); clip-path: polygon(0 100%, 100% 100%, 50% 0); filter: brightness(.96); }
+.op-flap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.op-flap polyline { stroke: color-mix(in oklab, var(--op-ink-fg) 28%, transparent); stroke-width: 1; }
 
-.seal {
-  position: absolute; z-index: 6; left: 50%; top: 60%;
-  width: 19%; aspect-ratio: 1; margin: -9.5% 0 0 -9.5%;
+.op-vignette {
+  position: absolute; inset: 0; z-index: 35; pointer-events: none;
+  background: radial-gradient(130% 95% at 40% 35%, transparent 45%, color-mix(in oklab, var(--op-ink) 45%, transparent) 100%);
+}
+
+/* σφραγίδα */
+.op-seal {
+  position: absolute; z-index: 50; left: 50%; top: var(--op-fold);
+  width: var(--op-seal); height: var(--op-seal);
+  margin: calc(var(--op-seal) / -2) 0 0 calc(var(--op-seal) / -2);
+  padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer;
+  transition: transform .3s var(--ease-out);
+  animation: opSealIn 1.2s var(--ease-out) .3s backwards;
+}
+.envelope-stage:not(.open) .op-seal:hover { transform: scale(1.03); }
+.envelope-stage:not(.open) .op-seal:active { transform: scale(.97); }
+.op-seal:focus { outline: none; }
+.op-seal:focus-visible { box-shadow: 0 0 0 4px var(--op-deep), 0 0 0 6px var(--op-gold); }
+@keyframes opSealIn { from { opacity: 0; transform: scale(1.15); } }
+
+.op-seal-inner {
+  position: relative; display: block; width: 100%; height: 100%;
+  filter: drop-shadow(0 2px 2px color-mix(in oklab, var(--op-ink) 60%, transparent))
+          drop-shadow(0 10px 18px color-mix(in oklab, var(--op-ink) 45%, transparent));
+}
+.op-half { position: absolute; inset: 0; }
+.op-half[data-half="l"] { clip-path: inset(0 50% 0 0); }
+.op-half[data-half="r"] { clip-path: inset(0 0 0 50%); }
+.op-half img { display: block; width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; user-select: none; }
+
+/* τα αρχικά στη σφραγίδα: χρυσός δίσκος πάνω από τα αρχικά της εικόνας + χαραγμένο μονόγραμμα */
+.op-mono {
+  position: absolute; left: 50.3%; top: 49.8%; width: 67%; height: 67%;
+  transform: translate(-50%, -50%); border-radius: 50%;
   display: grid; place-items: center;
-  filter: drop-shadow(0 4px 5px rgba(0,0,0,.45));
-  transform: translateZ(4px);
-  transition: transform .3s ease;
+  background:
+    radial-gradient(70% 60% at 34% 28%, rgba(255, 236, 170, .55), transparent 70%),
+    radial-gradient(circle at 50% 50%, #c9a144 0%, #bf9437 55%, #a87d26 100%);
+  -webkit-mask-image: radial-gradient(circle, #000 88%, transparent 100%);
+          mask-image: radial-gradient(circle, #000 88%, transparent 100%);
 }
-.seal svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.seal span {
-  position: relative; font-family: var(--display); font-size: clamp(15px, 4.4vw, 21px);
-  color: #7a5208; text-shadow: 0 1px 0 rgba(255,246,210,.9), 0 -1px 0 rgba(90,55,0,.35);
-}
-.envelope-stage:not(.open):hover .seal { transform: translateZ(4px) scale(1.06) rotate(-3deg); }
-
-.burst { position: absolute; z-index: 7; left: 50%; top: 60%; width: 0; height: 0; pointer-events: none; transform: translateZ(5px); }
-.burst i {
-  position: absolute; left: 0; top: 0; opacity: 0;
-  animation: fly var(--d) cubic-bezier(.15,.6,.3,1) forwards;
-}
-.burst .petal {
-  width: 10px; height: 14px; margin: -7px 0 0 -5px;
-  background: var(--c); border-radius: 0 100% 0 100%;
-  box-shadow: 0 1px 2px rgba(0,0,0,.18);
-}
-.burst .spark {
-  width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%;
-  background: #fff; box-shadow: 0 0 8px 3px rgba(180,205,255,.85);
-}
-@keyframes fly {
-  0%   { opacity: 1; transform: translate(0,0) scale(.3) rotate(0); }
-  75%  { opacity: 1; }
-  100% { opacity: 0; transform: translate(var(--x), calc(var(--y) + 70px)) scale(var(--s)) rotate(var(--r)); }
+.op-mono span {
+  font-family: var(--display); font-weight: 400; line-height: 1;
+  font-size: calc(var(--op-seal) * .25); letter-spacing: .02em; white-space: nowrap;
+  color: #9c7222;
+  text-shadow: 0 1px 0 rgba(255, 238, 185, .75), 0 -1px 0 rgba(92, 60, 8, .55);
 }
 
-.env-hint {
-  margin: 0; color: var(--navy); font-style: italic; letter-spacing: .04em;
-  text-shadow: 0 0 6px #fff, 0 0 14px #fff, 0 0 22px #fff;
-  animation: pulse 2.4s ease-in-out infinite; transition: opacity .3s;
+.op-prompt {
+  position: absolute; inset-inline: 0; z-index: 40; margin: 0; pointer-events: none;
+  top: calc(var(--op-fold) + clamp(5rem, 17vw, 7.25rem));
+  text-align: center; color: var(--op-gold);
+  font-family: var(--serif); font-size: .66rem; font-weight: 500; letter-spacing: .38em; text-transform: uppercase;
+  text-shadow: 0 1px 8px color-mix(in oklab, var(--op-ink) 70%, transparent);
+  animation: opFadeIn 1.4s var(--ease-out) 1.2s backwards;
 }
-@keyframes pulse { 50% { opacity: .45; } }
+.op-prompt span { animation: opPulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
+@keyframes opFadeIn { from { opacity: 0; } }
+@keyframes opPulse { 50% { opacity: .5; } }
 
-/* άνοιγμα */
-.envelope-stage.open .env-float { animation-play-state: paused; }
-.envelope-stage.open .seal { animation: sealPop .55s ease-in forwards; }
-@keyframes sealPop {
-  0%   { transform: translateZ(4px) scale(1); }
-  35%  { transform: translateZ(4px) scale(1.18); }
-  100% { transform: translateZ(4px) scale(.2) rotate(35deg); opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .op-seal, .op-prompt, .op-prompt span { animation: none; }
 }
-.envelope-stage.open .flap-shadow { opacity: 0; }
-.envelope-stage.open .env-flap { transform: translateZ(.5px) rotateX(180deg); z-index: 1; }
-.envelope-stage.open .letter { transform: translateZ(1px) translateY(-62%); }
-.envelope-stage.open .envelope { transform: translateY(22%); }
-.envelope-stage.gone .envelope { transform: translateY(22%) scale(1.06); transition-delay: 0s; }
-.envelope-stage.open .env-hint { animation: none; opacity: 0; }
 
 /* ---------------- Κάρτα ---------------- */
 /* πλακάκι σε λεπτές γραμμές (Lovable): μπαίνει σε όλα τα ανοιχτόχρωμα φόντα */
@@ -601,7 +597,7 @@ input[type=text]:focus, textarea:focus {
 /* μεγάλοι τίτλοι: λεπτό serif */
 .names, .sec-title, .rsvp-title, .thanks-title, .chapter h3, .venue h3, .cd-done,
 .big-date, .when-date, .timeline time, .timeline strong, .map-name, .cd-cell b,
-.letter-names, .seal span, .divider i, .closing-sign .mono {
+.divider i, .closing-sign .mono {
   font-family: var(--display); font-optical-sizing: auto; font-style: normal;
 }
 .names {
@@ -620,13 +616,11 @@ input[type=text]:focus, textarea:focus {
 .timeline strong { font-weight: 300; font-size: 1.4rem; line-height: 1.2; }
 .map-name { font-weight: 300; font-size: 1.5rem; }
 .cd-cell b { font-weight: 200; }
-.letter-names { font-weight: 300; }
-.letter-names em { font-style: italic; color: var(--gold); }
 .closing-sign p:first-of-type { font-family: var(--display); font-weight: 300; font-size: 1.35rem; }
 
 /* μικρές επικεφαλίδες: αραιά κεφαλαία Manrope */
 .eyebrow, .kicker, .when-day, .venue-label, .chapter-num, .program-title, .cd-cell > span,
-.field > span, .choice legend, .tab, .scroll-cue span, .letter-date, .photo.empty span {
+.field > span, .choice legend, .tab, .scroll-cue span, .photo.empty span {
   font-family: var(--serif); font-weight: 500; font-style: normal;
   font-size: .66rem; letter-spacing: .38em; text-transform: uppercase;
 }
@@ -636,7 +630,7 @@ input[type=text]:focus, textarea:focus {
 .btn, .submit { font-family: var(--serif); font-weight: 600; font-size: .72rem; letter-spacing: .3em; }
 
 /* πλάγια υπότιτλοι: italic serif */
-.sec-sub, .hero-place, .when-time, .muted, .timeline small, .cd-place, .counter-label small, .env-hint, .lead {
+.sec-sub, .hero-place, .when-time, .muted, .timeline small, .cd-place, .counter-label small, .lead {
   font-family: var(--display); font-style: italic; font-weight: 300;
 }
 .lead { font-size: 1.25rem; line-height: 1.5; }
