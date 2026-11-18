@@ -34,93 +34,55 @@ body {
 }
 body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 
-/* ---------------- Φάκελος: κάρτα που ανοίγει σε δύο φύλλα ---------------- */
+/* ---------------- Φάκελος: ρεαλιστικό βίντεο ---------------- */
 .envelope-stage {
   --op-ink: oklch(19% .045 263);
-  --op-ink-fg: oklch(95.5% .016 84);
   --op-gold: oklch(76% .09 78);
-  --op-deep: oklch(27% .09 263);
-  --op-cream: #f3eee2;
-  --op-seal: clamp(7.5rem, 26vw, 11rem);  /* μέγεθος σφραγίδας */
   position: fixed; inset: 0; z-index: 60; overflow: hidden;
-  background: var(--op-deep);
-  perspective: 1300px;
+  background: #1d2a4a;
+  container-type: size;
   cursor: pointer;
 }
 .envelope-stage.gone { pointer-events: none; }
-.op-tex { position: absolute; inset: 0; background: url("/envelope/paper.webp") center / cover; }
 
-/* εσωτερικό */
-.op-inner { position: absolute; inset: 0; filter: brightness(.3); } /* σκοτεινό μέχρι να ανοίξουν τα φύλλα */
-.op-inner > .op-tex { filter: brightness(.42) saturate(.92); }
-.op-defs { position: absolute; }
+/* θολό φόντο: φαίνεται μόνο όταν το βίντεο δεν καλύπτει όλο το ύψος (κινητό) */
+.iv-bg {
+  position: absolute; inset: -40px; width: calc(100% + 80px); height: calc(100% + 80px);
+  filter: blur(24px) brightness(.9); pointer-events: none;
+  display: none;
+}
+@container (max-aspect-ratio: 57 / 100) {
+  .iv-bg { display: block; }
+  /* οι άκρες της λωρίδας σβήνουν απαλά μέσα στο θολό φόντο */
+  .iv-frame { box-shadow: none;
+    -webkit-mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent);
+            mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent); }
+}
 
-/* τα δύο φύλλα */
-.op-half { position: absolute; left: 0; right: 0; height: 50%; backface-visibility: hidden; }
-.op-half-t { top: 0; transform-origin: 50% 0; z-index: 3; }
-.op-half-b { bottom: 0; transform-origin: 50% 100%; z-index: 2; }
-.op-clip { position: absolute; inset: 0; overflow: hidden; }
-.op-half .op-tex { filter: brightness(.86) saturate(.92); }
-/* η υφή συνεχίζεται από το ένα φύλλο στο άλλο */
-.op-half-t .op-tex { bottom: -100%; }
-.op-half-b .op-tex { top: -100%; }
-.op-half-t { box-shadow: 0 1px 0 color-mix(in oklab, var(--op-ink-fg) 22%, transparent); }
-.op-half-b { box-shadow: inset 0 1px 0 color-mix(in oklab, var(--op-ink) 40%, transparent); }
-.op-deco { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--op-gold); opacity: .1; pointer-events: none; }
-.op-frame { position: absolute; inset: 18px; border: 1px solid color-mix(in oklab, var(--op-gold) 55%, transparent); pointer-events: none; }
-.op-half-t .op-frame { bottom: -1px; border-bottom: 0; }
-.op-half-b .op-frame { top: -1px; border-top: 0; }
-.op-dim { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.op-half-t .op-dim { background: linear-gradient(to bottom, color-mix(in oklab, var(--op-ink) 30%, transparent), var(--op-ink)); }
-.op-half-b .op-dim { background: linear-gradient(to top, color-mix(in oklab, var(--op-ink) 30%, transparent), var(--op-ink)); }
-.op-half::after { /* απαλή σκιά στις άκρες */
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(140% 120% at 50% var(--vy, 100%), transparent 50%, color-mix(in oklab, var(--op-ink) 40%, transparent));
+/* 16:9 πλαίσιο:
+   - κανονικά καλύπτει την οθόνη ×1.12 και κατεβαίνει λίγο, ώστε το σήμα (κάτω δεξιά) να μένει έξω
+   - σε στενές οθόνες δεν ξεπερνά πλάτος = 100% / 0.32, για να χωρούν τα αρχικά «Σ · Μ» */
+.iv-frame {
+  position: absolute; left: 50%; top: 50%;
+  width: min(100cqw / .32, max(100cqw, 100cqh * 16 / 9) * 1.12);
+  aspect-ratio: 16 / 9;
+  translate: -50% calc(-50% + 4.5%);
+  box-shadow: 0 0 60px 30px rgba(0, 0, 0, .25);
 }
-.op-half-b::after { --vy: 0%; }
+.iv-video { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-/* σφραγίδα: κάθεται πάνω στην ένωση και φεύγει μαζί με το πάνω φύλλο */
-.op-seal {
-  position: absolute; z-index: 5; left: 50%; bottom: 0;
-  width: var(--op-seal); height: var(--op-seal);
-  margin: 0 0 calc(var(--op-seal) / -2) calc(var(--op-seal) / -2);
-  padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer;
-  transition: transform .3s var(--ease-out);
-  animation: opSealIn 1.2s var(--ease-out) .3s backwards;
+/* η σφραγίδα του βίντεο: κέντρο (49.05%, 48.8%), διάμετρος ~17.6% του πλάτους */
+.iv-seal {
+  position: absolute; left: 49.05%; top: 48.8%;
+  width: 17.6%; aspect-ratio: 1; translate: -50% -50%;
+  padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer;
 }
-.envelope-stage:not(.open) .op-seal:hover { transform: scale(1.03); }
-.envelope-stage:not(.open) .op-seal:active { transform: scale(.97); }
-.op-seal:focus { outline: none; }
-.op-seal:focus-visible { box-shadow: 0 0 0 4px var(--op-deep), 0 0 0 6px var(--op-gold); }
-@keyframes opSealIn { from { opacity: 0; transform: scale(1.15); } }
-.op-seal-inner {
-  position: relative; display: block; width: 100%; height: 100%;
-  filter: drop-shadow(0 2px 2px color-mix(in oklab, var(--op-ink) 60%, transparent))
-          drop-shadow(0 10px 18px color-mix(in oklab, var(--op-ink) 45%, transparent));
-}
-.op-seal img { display: block; width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; user-select: none; }
-
-/* τα αρχικά στη σφραγίδα: χρυσός δίσκος πάνω από τα αρχικά της εικόνας + χαραγμένο μονόγραμμα */
-.op-mono {
-  position: absolute; left: 50.3%; top: 49.8%; width: 67%; height: 67%;
-  transform: translate(-50%, -50%); border-radius: 50%;
-  display: grid; place-items: center;
-  background:
-    radial-gradient(70% 60% at 34% 28%, rgba(255, 236, 170, .55), transparent 70%),
-    radial-gradient(circle at 50% 50%, #c9a144 0%, #bf9437 55%, #a87d26 100%);
-  -webkit-mask-image: radial-gradient(circle, #000 88%, transparent 100%);
-          mask-image: radial-gradient(circle, #000 88%, transparent 100%);
-}
-.op-mono span {
-  font-family: var(--display); font-weight: 400; line-height: 1;
-  font-size: calc(var(--op-seal) * .25); letter-spacing: .02em; white-space: nowrap;
-  color: #9c7222;
-  text-shadow: 0 1px 0 rgba(255, 238, 185, .75), 0 -1px 0 rgba(92, 60, 8, .55);
-}
+.iv-seal:focus { outline: none; }
+.iv-seal:focus-visible { box-shadow: 0 0 0 3px var(--op-gold); }
+.envelope-stage.open .iv-seal { visibility: hidden; }
 
 .op-prompt {
-  position: absolute; inset-inline: 0; z-index: 4; margin: 0; pointer-events: none;
-  top: calc(50% + clamp(5rem, 17vw, 7.25rem));
+  position: absolute; inset-inline: 0; top: 70%; margin: 0; pointer-events: none;
   text-align: center; color: var(--op-gold);
   font-family: var(--serif); font-size: .66rem; font-weight: 500; letter-spacing: .38em; text-transform: uppercase;
   text-shadow: 0 1px 8px color-mix(in oklab, var(--op-ink) 70%, transparent);
@@ -131,7 +93,7 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
 @keyframes opPulse { 50% { opacity: .5; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .op-seal, .op-prompt, .op-prompt span { animation: none; }
+  .op-prompt, .op-prompt span { animation: none; }
 }
 
 /* ---------------- Κάρτα ---------------- */

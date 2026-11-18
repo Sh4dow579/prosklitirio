@@ -14,58 +14,19 @@
 </head>
 <body>
 
-<!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή): κάρτα που ανοίγει σε δύο φύλλα ============ -->
+<!-- ============ ΦΑΚΕΛΟΣ (εισαγωγή): ρεαλιστικό βίντεο ============ -->
 <div class="envelope-stage" id="envelope" role="dialog" aria-modal="true" aria-label="Άνοιγμα πρόσκλησης">
-
-  <!-- εσωτερικό: σκούρο, φαίνεται μόνο στη σχισμή όταν ξεκολλάνε τα φύλλα -->
-  <div class="op-inner">
-    <div class="op-tex"></div>
-    <svg class="op-defs" width="0" height="0" aria-hidden="true">
-      <defs>
-        <pattern id="opTile" width="72" height="72" patternUnits="userSpaceOnUse" viewBox="0 0 80 80">
-          <g fill="none" stroke="currentColor" stroke-width=".7">
-            <rect width="80" height="80"/>
-            <circle r="16"/><circle cx="80" r="16"/><circle cy="80" r="16"/><circle cx="80" cy="80" r="16"/>
-            <path d="M40 6 L74 40 L40 74 L6 40 Z"/>
-            <circle cx="40" cy="40" r="22" stroke-dasharray="1.5 3"/>
-            <ellipse cx="40" cy="27" rx="4.2" ry="10"/><ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(45 40 40)"/>
-            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(90 40 40)"/><ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(135 40 40)"/>
-            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(180 40 40)"/><ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(225 40 40)"/>
-            <ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(270 40 40)"/><ellipse cx="40" cy="27" rx="4.2" ry="10" transform="rotate(315 40 40)"/>
-          </g>
-          <g fill="currentColor"><circle cx="40" cy="40" r="3.4"/><circle r="4"/><circle cx="80" r="4"/><circle cy="80" r="4"/><circle cx="80" cy="80" r="4"/></g>
-        </pattern>
-      </defs>
-    </svg>
+  <!-- θολό αντίγραφο πίσω (ζωγραφίζεται από το ίδιο βίντεο), για να γεμίζει πάνω/κάτω σε στενές οθόνες -->
+  <canvas class="iv-bg" width="32" height="18" aria-hidden="true"></canvas>
+  <!-- το βίντεο: γεμίζει την οθόνη με λίγο ζουμ (κόβει την κάτω δεξιά γωνία με το σήμα),
+       αλλά στο κινητό χωράει στο πλάτος ώστε να φαίνονται ολόκληρα τα αρχικά -->
+  <div class="iv-frame">
+    <video class="iv-video" src="/envelope/intro.mp4" poster="/envelope/intro-poster.jpg"
+           muted playsinline preload="auto" aria-hidden="true"></video>
+    <!-- αόρατο κουμπί πάνω στη σφραγίδα του βίντεο -->
+    <button type="button" class="iv-seal" aria-label="Πατήστε για είσοδο"></button>
+    <p class="op-prompt"><span>Πατήστε για είσοδο</span></p>
   </div>
-
-  <!-- κάτω φύλλο -->
-  <div class="op-half op-half-b">
-    <div class="op-clip">
-      <div class="op-tex"></div>
-      <svg class="op-deco" aria-hidden="true"><rect width="100%" height="100%" fill="url(#opTile)"/></svg>
-      <div class="op-frame"></div>
-      <div class="op-dim"></div>
-    </div>
-  </div>
-
-  <!-- πάνω φύλλο, με τη σφραγίδα κολλημένη στην άκρη του -->
-  <div class="op-half op-half-t">
-    <div class="op-clip">
-      <div class="op-tex"></div>
-      <svg class="op-deco" aria-hidden="true"><rect width="100%" height="100%" fill="url(#opTile)"/></svg>
-      <div class="op-frame"></div>
-      <div class="op-dim"></div>
-    </div>
-    <button type="button" class="op-seal" aria-label="Πατήστε για είσοδο">
-      <span class="op-seal-inner">
-        <img src="/envelope/seal.webp" alt="" width="640" height="652" draggable="false">
-        <span class="op-mono"><span data-cfg="monogram"></span></span>
-      </span>
-    </button>
-  </div>
-
-  <p class="op-prompt"><span>Πατήστε για είσοδο</span></p>
 </div>
 
 <!-- ============ ΠΡΟΣΚΛΗΤΗΡΙΟ ============ -->
@@ -519,49 +480,55 @@ async function openEnvelope() {
   if (opened) return;
   opened = true;
   envelope.classList.add("open");
-  envelope.querySelector(".op-seal").disabled = true;
+  envelope.querySelector(".iv-seal").disabled = true;
   if (navigator.vibrate) try { navigator.vibrate(15); } catch {}
-
   const $ = s => envelope.querySelector(s);
+  const video = $(".iv-video");
+
+  // το βίντεο ανοίγει τον φάκελο, δείχνει τα αρχικά και σβήνει σε λευκό·
+  // λίγο πριν το τέλος (στο λευκό) περνάμε στο προσκλητήριο
+  const FADE_AT = 4.45; // δευτερόλεπτα μέσα στο βίντεο
   if (!reduceMotion) {
-    const top = $(".op-half-t"), bottom = $(".op-half-b");
-    const OPEN = "cubic-bezier(.55,0,.25,1)";
-    // 1. το κείμενο σβήνει, η σφραγίδα «πιέζεται»
-    await Promise.all([
-      play($(".op-prompt"), [{ opacity: 0 }], { duration: 300, easing: EASE_OUT }),
-      play($(".op-seal-inner"), [
-        { transform: "scale(1)", easing: EASE_OUT },
-        { transform: "scale(.94)", easing: EASE_OUT },
-        { transform: "scale(1)" }
-      ], { duration: 350 }),
-    ]);
-    // 2. τα δύο φύλλα ξεκολλάνε: ανοίγει μια σκούρα σχισμή στην ένωση
-    await Promise.all([
-      play(top, [{ transform: "rotateX(0deg)" }, { transform: "rotateX(-12deg)" }], { duration: 800, easing: EASE_OUT }),
-      play(bottom, [{ transform: "rotateX(0deg)" }, { transform: "rotateX(10deg)" }], { duration: 800, easing: EASE_OUT }),
-    ]);
-    // 3. τα φύλλα αρχίζουν να γέρνουν προς τα πίσω (το πάνω με τη σφραγίδα)…
-    play(top, [{ transform: "rotateX(-12deg)" }, { transform: "rotateX(-68deg)" }], { duration: 850, easing: OPEN });
-    play(bottom, [{ transform: "rotateX(10deg)" }, { transform: "rotateX(70deg)" }], { duration: 850, easing: OPEN });
-    play($(".op-half-t .op-dim"), [{ opacity: 0 }, { opacity: .45 }], { duration: 850, easing: OPEN });
-    play($(".op-half-b .op-dim"), [{ opacity: 0 }, { opacity: .55 }], { duration: 850, easing: OPEN });
+    play($(".op-prompt"), [{ opacity: 0 }], { duration: 300, easing: EASE_OUT });
+    try {
+      await video.play();
+      await new Promise(resolve => {
+        const check = () => (video.currentTime >= FADE_AT || video.ended) ? resolve() : requestAnimationFrame(check);
+        check();
+        video.addEventListener("ended", resolve, { once: true });
+        video.addEventListener("error", resolve, { once: true });
+        setTimeout(resolve, 12000); // αν κολλήσει η φόρτωση, δεν μένουμε για πάντα εδώ
+      });
+    } catch { /* αν δεν παίζει το βίντεο, πάμε κατευθείαν στο προσκλητήριο */ }
     document.querySelector(".hero").animate(
-      [{ filter: "blur(12px)" }, { filter: "blur(0)" }],
-      { duration: 1600, easing: "cubic-bezier(.25,.1,.25,1)" }
+      [{ filter: "blur(10px)" }, { filter: "blur(0)" }],
+      { duration: 1500, easing: "cubic-bezier(.25,.1,.25,1)" }
     );
   }
 
-  // 4. …και μαζί με το άνοιγμα ο φάκελος σβήνει κατευθείαν στο προσκλητήριο
   scrollTo(0, 0);
   showCard();
   envelope.classList.add("gone");
   envelope.animate(
     [{ opacity: 1 }, { opacity: 0 }],
-    { duration: reduceMotion ? 400 : 1100, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
+    { duration: reduceMotion ? 400 : 1000, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
   ).finished.then(() => envelope.remove());
 }
+// θολό φόντο για στενές οθόνες: μικρό αντίγραφο του τρέχοντος καρέ
+(() => {
+  const bg = envelope.querySelector(".iv-bg"), video = envelope.querySelector(".iv-video");
+  if (!bg || getComputedStyle(bg).display === "none") return;
+  const ctx = bg.getContext("2d");
+  const poster = new Image();
+  poster.onload = () => { if (video.readyState < 2) ctx.drawImage(poster, 0, 0, 32, 18); };
+  poster.src = video.poster;
+  const draw = () => { if (!envelope.isConnected) return; if (video.readyState >= 2) ctx.drawImage(video, 0, 0, 32, 18); requestAnimationFrame(draw); };
+  video.addEventListener("play", () => requestAnimationFrame(draw), { once: true });
+  video.addEventListener("loadeddata", () => ctx.drawImage(video, 0, 0, 32, 18), { once: true });
+})();
+
 if (location.hash === "#rsvp") { // link κατευθείαν στη φόρμα, χωρίς φάκελο
-  opened = true; envelope.remove(); showCard();
+  opened = true; envelope.querySelector("video").removeAttribute("src"); envelope.remove(); showCard();
   requestAnimationFrame(() => document.getElementById("rsvp").scrollIntoView());
 }
 envelope.addEventListener("click", openEnvelope);
