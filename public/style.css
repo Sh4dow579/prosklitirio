@@ -51,25 +51,27 @@ body:has(.envelope-stage:not(.gone)) { overflow: hidden; }
   filter: blur(24px) brightness(.9); pointer-events: none;
   display: none;
 }
-@container (max-aspect-ratio: 57 / 100) {
-  .iv-bg { display: block; }
-  /* οι άκρες της λωρίδας σβήνουν απαλά μέσα στο θολό φόντο */
-  .iv-frame { box-shadow: none;
-    -webkit-mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent);
-            mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent); }
-}
 
 /* 16:9 πλαίσιο:
    - κανονικά καλύπτει την οθόνη ×1.12 και κατεβαίνει λίγο, ώστε το σήμα (κάτω δεξιά) να μένει έξω
-   - σε στενές οθόνες δεν ξεπερνά πλάτος = 100% / 0.32, για να χωρούν τα αρχικά «Σ · Μ» */
+   - σε στενές οθόνες δεν ξεπερνά πλάτος = 100% / 0.40 (χωρούν άνετα τα αρχικά «Σ · Μ») */
 .iv-frame {
   position: absolute; left: 50%; top: 50%;
-  width: min(100cqw / .32, max(100cqw, 100cqh * 16 / 9) * 1.12);
+  width: min(100cqw / .40, max(100cqw, 100cqh * 16 / 9) * 1.12);
   aspect-ratio: 16 / 9;
-  translate: -50% calc(-50% + 4.5%);
+  translate: -49.05% calc(-50% + 4.5%);
   box-shadow: 0 0 60px 30px rgba(0, 0, 0, .25);
 }
 .iv-video { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+@container (max-aspect-ratio: 71 / 100) {
+  .iv-bg { display: block; }
+  /* οι άκρες της λωρίδας σβήνουν απαλά μέσα στο θολό φόντο */
+  /* η σφραγίδα (49.05%, 48.8% του βίντεο) ακριβώς στο κέντρο της οθόνης */
+  .iv-frame { box-shadow: none; translate: -49.05% -48.8%;
+    -webkit-mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent);
+            mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent); }
+}
 
 /* η σφραγίδα του βίντεο: κέντρο (49.05%, 48.8%), διάμετρος ~17.6% του πλάτους */
 .iv-seal {
